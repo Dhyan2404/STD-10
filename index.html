@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>std 10</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ff0000, #0000ff);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow-x: hidden;
+      transition: background 2s ease;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 2rem;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+      font-weight: 900;
+      letter-spacing: 4px;
+      font-family: 'Poppins', sans-serif;
+      animation: zoomIn 0.6s ease;
+    }
+    button, .btn {
+      background: #0c7edf;
+      border: none;
+      border-radius: 12px;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: white;
+      box-shadow: 0 8px 15px rgba(12, 126, 223, 0.55);
+      transition: 0.3s ease all;
+      margin: 0.5rem;
+      min-width: 140px;
+      user-select: none;
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      transform-origin: center center;
+    }
+    button:hover, .btn:hover {
+      background: #005dbb;
+      box-shadow: 0 12px 20px rgba(0, 93, 187, 0.75);
+      transform: translateY(-3px);
+    }
+    button:focus, .btn:focus {
+      outline: none;
+      box-shadow: 0 0 15px 4px #1e90ff;
+    }
+    #content {
+      max-width: 700px;
+      width: 100%;
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 0 30px rgba(0,0,0,0.25);
+      text-align: center;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 1;
+      transition: opacity 0.4s ease;
+      will-change: opacity;
+    }
+    .hidden {
+      opacity: 0 !important;
+      pointer-events: none;
+      user-select: none;
+    }
+    .chapter-list, .option-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    .chapter-btn, .option-btn {
+      flex: 1 0 28%;
+      margin: 0.6rem;
+      padding: 1rem 0;
+      font-size: 1.1rem;
+      background: #1a73e8;
+      box-shadow: 0 7px 14px rgba(26, 115, 232, 0.55);
+      border-radius: 14px;
+      transition: 0.3s ease all;
+      color: white;
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      user-select: none;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transform-origin: center;
+    }
+    .chapter-btn:hover, .option-btn:hover {
+      background: #004ba0;
+      box-shadow: 0 10px 20px rgba(0, 75, 160, 0.8);
+      transform: translateY(-2px);
+    }
+    #backBtn {
+      margin-top: 1.5rem;
+      background: #ff7043;
+      box-shadow: 0 7px 14px rgba(255, 112, 67, 0.4);
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      align-self: center;
+      min-width: 110px;
+      transition: 0.3s ease all;
+    }
+    #backBtn:hover {
+      background: #e64a19;
+      box-shadow: 0 10px 20px rgba(230,74,25,0.6);
+    }
+    @keyframes zoomIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.7);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      .chapter-btn, .option-btn {
+        flex: 1 0 45%;
+        padding: 0.8rem 0;
+        font-size: 1rem;
+      }
+      #content {
+        padding: 1.5rem;
+        min-height: auto;
+      }
+      button, .btn {
+        min-width: 120px;
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+      }
+    }
+    @media (max-width: 400px) {
+      .chapter-btn, .option-btn {
+        flex: 1 0 90%;
+        padding: 0.7rem 0;
+        font-size: 0.95rem;
+      }
+      button, .btn {
+        min-width: 100px;
+        font-size: 0.9rem;
+        padding: 0.7rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1 id="title">Std 10</h1>
+
+  <div id="content" role="main" tabindex="-1">
+    <button id="mathsBtn" aria-label="Open Maths chapters">Maths</button>
+  </div>
+
+  <script>
+    const content = document.getElementById('content');
+    const title = document.getElementById('title');
+
+    // Use original Google Drive "view" URLs that you provided for Dakla links
+    const pdfLinks = {
+      13: {
+        dakla: 'https://drive.google.com/file/d/10EOWNsaV_J18du1vhfztceF1w7QNnVEb/view?usp=sharing',
+        objective: null,
+      },
+      14: {
+        dakla: 'https://drive.google.com/file/d/1LYfPZx5y2FudhPNgWq_c05ctBvW1hdYP/view?usp=sharing',
+        objective: null,
+      }
+    };
+
+    // Array of 12 background gradients for cycling colors
+    const bgColors = [
+      'linear-gradient(135deg, #ff0000, #8B0000)',   // Red shades
+      'linear-gradient(135deg, #0000ff, #00008B)',   // Blue shades
+      'linear-gradient(135deg, #008000, #004d00)',   // Green shades
+      'linear-gradient(135deg, #ffa500, #cc8400)',   // Orange shades
+      'linear-gradient(135deg, #800080, #4b004b)',   // Purple shades
+      'linear-gradient(135deg, #00ffff, #008080)',   // Aqua shades
+      'linear-gradient(135deg, #ff69b4, #cc547a)',   // Pink shades
+      'linear-gradient(135deg, #ffd700, #b38f00)',   // Gold shades
+      'linear-gradient(135deg, #40e0d0, #107070)',   // Turquoise shades
+      'linear-gradient(135deg, #ff4500, #b23000)',   // OrangeRed shades
+      'linear-gradient(135deg, #add8e6, #74a8d4)',   // LightBlue shades
+      'linear-gradient(135deg, #a52a2a, #6e1c1c)'    // Brown shades
+    ];
+    let currentBgIndex = 0;
+
+    // Change background color every 4 seconds with smooth transition
+    function cycleBackgroundColors() {
+      currentBgIndex = (currentBgIndex + 1) % bgColors.length;
+      document.body.style.background = bgColors[currentBgIndex];
+    }
+    // Start cycling
+    setInterval(cycleBackgroundColors, 4000);
+
+    // Function to animate fade out, then update content, then fade in
+    function transitionContent(newHtml, callback) {
+      content.style.opacity = '0';
+      setTimeout(() => {
+        content.innerHTML = newHtml;
+        content.style.opacity = '1';
+        if (callback) {
+          callback();
+        }
+        content.focus();
+      }, 300);
+    }
+
+    function mainPage() {
+      title.textContent = 'Std 10';
+      const html = `<button id="mathsBtn" aria-label="Open Maths chapters">Maths</button>`;
+      transitionContent(html, () => {
+        const btn = document.getElementById('mathsBtn');
+        btn.addEventListener('click', () => {
+          showChapters();
+        });
+        btn.focus();
+      });
+    }
+
+    function showChapters() {
+      title.textContent = 'Maths - Chapters';
+      let html = '<div class="chapter-list" role="list">';
+      for(let i=1; i<=14; i++) {
+        html += `<button class="chapter-btn" data-chap="${i}" role="listitem" aria-label="Open Chapter ${i}">Chapter ${i}</button>`;
+      }
+      html += '</div>';
+      html += '<button id="backBtn" aria-label="Back to main page">Back</button>';
+
+      transitionContent(html, () => {
+        document.querySelectorAll('.chapter-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const chap = parseInt(btn.dataset.chap);
+            if(chap >= 1 && chap <= 12) {
+              alert('Coming soon! I will add in further updates.');
+            } else {
+              showChapterOptions(chap);
+            }
+          });
+        });
+
+        const backBtn = document.getElementById('backBtn');
+        backBtn.addEventListener('click', () => {
+          mainPage();
+        });
+        backBtn.focus();
+      });
+    }
+
+    function showChapterOptions(chapter) {
+      title.textContent = `Chapter ${chapter} Options`;
+      let html = `
+        <div class="option-list" role="list">
+          <button class="option-btn" data-type="dakla" role="listitem" aria-label="Open Dakla for Chapter ${chapter}">Dakla</button>
+          <button class="option-btn" data-type="objective" role="listitem" aria-label="Open Objective for Chapter ${chapter}">Objective</button>
+        </div>
+        <button id="backBtn" aria-label="Back to chapters list">Back</button>
+      `;
+      transitionContent(html, () => {
+        document.querySelectorAll('.option-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const type = btn.dataset.type;
+            if (type === 'dakla' && pdfLinks[chapter].dakla) {
+              openPDFInNewTab(pdfLinks[chapter].dakla);
+            } else {
+              alert('Coming soon! I will add in further updates.');
+            }
+          });
+        });
+
+        const backBtn = document.getElementById('backBtn');
+        backBtn.addEventListener('click', () => {
+          showChapters();
+        });
+        backBtn.focus();
+      });
+    }
+
+    function openPDFInNewTab(url) {
+      window.open(url, '_blank', 'noopener');
+    }
+
+    mainPage();
+  </script>
+</body>
+</html>
