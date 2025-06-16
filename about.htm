@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>About Dhyan - Cool Personal Website</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Poppins&family=Comic+Neue&family=Material+Icons" rel="stylesheet" />
+<style>
+  /* Reset and base */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  html, body {
+    height: 100%;
+    font-family: var(--font-family, 'Inter'), sans-serif;
+    font-size: var(--font-size, 16px);
+    background: var(--bg-color, linear-gradient(135deg, #6366f1, #22d3ee));
+    color: var(--font-color, #f9fafb);
+    overflow-x: hidden;
+    transition: background 0.5s ease, color 0.5s ease, font-family 0.5s ease, font-size 0.5s ease;
+    cursor: default;
+  }
+
+  /* CSS Variables for theme & customization */
+  :root {
+    --bg-color: linear-gradient(135deg, #6366f1, #22d3ee);
+    --font-color: #f9fafb;
+    --main-text-color: #eef2ff;
+    --accent-color: #3b82f6;
+    --glow-color-start: #22d3ee;
+    --glow-color-mid: #3b82f6;
+    --glow-color-end: #22d3ee;
+    --font-family: 'Inter', sans-serif;
+    --font-size: 16px;
+  }
+  /* Keep these as defaults only */
+  body:not(.customized).light-theme {
+    --bg-color: linear-gradient(135deg, #e0f2fe, #bae6fd);
+    --font-color: #1e293b;
+    --main-text-color: #1e293b;
+    --accent-color: #2563eb;
+    --glow-color-start: #3b82f6;
+    --glow-color-mid: #2563eb;
+    --glow-color-end: #3b82f6;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(0 0 0 / 0.1);
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  /* Layout grid */
+  body {
+    display: grid;
+    grid-template-areas:
+      "header header"
+      "sidebar main"
+      "footer footer";
+    grid-template-columns: 280px 1fr;
+    grid-template-rows: 64px 1fr auto;
+    min-height: 100vh;
+  }
+
+  /* Sticky Header */
+  header {
+    grid-area: header;
+    position: sticky;
+    top: 0;
+    height: 64px;
+    background: rgba(255 255 255 / 0.15);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255 255 255 / 0.2);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 20;
+  }
+  /* Legend Animation on Brand */
+  @keyframes legendGlow {
+    0%, 100% {
+      text-shadow:
+        0 0 8px var(--accent-color),
+        0 0 16px var(--accent-color),
+        0 0 24px var(--accent-color);
+      color: var(--main-text-color);
+    }
+    50% {
+      text-shadow:
+        0 0 16px var(--accent-color),
+        0 0 32px var(--accent-color),
+        0 0 48px var(--accent-color);
+      color: var(--accent-color);
+    }
+  }
+  header .brand {
+    font-weight: 700;
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    color: var(--main-text-color);
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    user-select: none;
+    animation: legendGlow 3.5s ease-in-out infinite;
+    transition: color 0.3s ease;
+  }
+  header .brand .material-icons {
+    font-size: 32px;
+    color: var(--accent-color);
+    transition: color 0.3s ease;
+  }
+  header .brand:hover, header .brand:focus {
+    color: var(--accent-color);
+  }
+  header .brand:hover .material-icons, header .brand:focus .material-icons {
+    color: var(--accent-color);
+  }
+
+  /* Sidebar */
+  aside {
+    grid-area: sidebar;
+    background: rgba(255 255 255 / 0.1);
+    backdrop-filter: blur(16px);
+    border-right: 1px solid rgba(255 255 255 / 0.2);
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  aside nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--main-text-color);
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 12px;
+    transition: background-color 0.3s ease, transform 0.3s ease, color 0.3s ease, text-shadow 0.4s ease;
+    cursor: pointer;
+    position: relative;
+  }
+  aside nav a .material-icons {
+    font-size: 20px;
+    color: #a5b4fc;
+    transition: color 0.3s ease;
+  }
+  aside nav a:hover, aside nav a:focus {
+    background: rgba(255 255 255 / 0.15);
+    color: var(--accent-color);
+    text-shadow:
+      0 0 6px var(--accent-color),
+      0 0 12px var(--accent-color);
+    outline: none;
+    transform: translateY(-5px);
+  }
+  aside nav a:hover .material-icons, aside nav a:focus .material-icons {
+    color: var(--accent-color);
+  }
+
+  /* Main content container for slide-in left and blue energy glow text on load only */
+  main {
+    grid-area: main;
+    padding: 40px 48px;
+    overflow-y: auto;
+    min-height: calc(100vh - 64px);
+    opacity: 0;
+    transform: translateX(-40px);
+    animation: slideInLeftGlow 1.2s ease forwards;
+    animation-delay: 0.3s;
+  }
+  main.loaded {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Animation: Text glow sheen moving left to right - runs once on load */
+  @keyframes sheen {
+    0% {
+      background-position: -150%;
+    }
+    100% {
+      background-position: 150%;
+    }
+  }
+
+  /* blue energy glow text effect, triggered once on load */
+  .glow-text-temp {
+    position: relative;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--glow-color-start) 0%, var(--glow-color-mid) 50%, var(--glow-color-end) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: sheen 2.5s linear 1 forwards;
+  }
+
+  /* Lift and glow on hover for headings and interactive text */
+  h1, h2, a, .brand, aside nav a {
+    transition: transform 0.3s ease, color 0.4s ease, text-shadow 0.4s ease;
+  }
+  h1:hover:not(.glow-text-temp), h2:hover:not(.glow-text-temp), a:hover, h1:focus:not(.glow-text-temp), h2:focus:not(.glow-text-temp), a:focus, .brand:hover, .brand:focus, aside nav a:hover, aside nav a:focus {
+    transform: translateY(-6px);
+    color: var(--accent-color);
+    text-shadow:
+      0 0 8px var(--accent-color),
+      0 0 16px var(--accent-color),
+      0 0 32px var(--accent-color);
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* Headings styling */
+  main h1, main h2 {
+    color: var(--main-text-color);
+  }
+  main p, main ul, main li {
+    font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+    line-height: 1.7;
+    max-width: 700px;
+    color: var(--font-color);
+  }
+  main ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 8px;
+  }
+  main a {
+    color: var(--accent-color);
+    text-decoration: underline;
+  }
+  main a:hover, main a:focus {
+    color: #60a5fa;
+  }
+
+  /* Comment Box */
+  #comments {
+    margin-top: 64px;
+    max-width: 700px;
+  }
+  #comments form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(255 255 255 / 0.1);
+    padding: 16px 24px;
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+  }
+  #comments label {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--main-text-color);
+  }
+  #comment-input {
+    resize: vertical;
+    min-height: 80px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1rem;
+    font-family: var(--font-family, 'Inter'), sans-serif;
+    color: var(--font-color);
+    background: rgba(255 255 255 / 0.05);
+    transition: background 0.3s ease;
+  }
+  #comment-input:focus {
+    outline: 2px solid var(--accent-color);
+    background: rgba(255 255 255 / 0.15);
+  }
+  #submit-comment {
+    align-self: flex-end;
+    padding: 10px 24px;
+    font-weight: 700;
+    font-size: 1rem;
+    color: white;
+    background: linear-gradient(135deg, var(--accent-color), #22d3ee);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  #submit-comment:disabled {
+    background: rgba(99, 102, 241, 0.5);
+    cursor: not-allowed;
+  }
+  #submit-comment:not(:disabled):hover {
+    background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+  }
+
+  /* Comments list */
+  #comment-list {
+    margin-top: 32px;
+    max-height: 320px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    color: var(--font-color);
+  }
+  .comment-item {
+    background: rgba(0 0 0 / 0.25);
+    padding: 16px 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    opacity: 0;
+    animation: fadeInUp 0.4s forwards;
+    color: var(--font-color);
+  }
+  .comment-item p {
+    font-size: 1rem;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+  .comment-item time {
+    font-size: 0.8rem;
+    color: var(--accent-color);
+    margin-top: 6px;
+    display: block;
+    font-style: normal;
+  }
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes slideInLeftGlow {
+    0% {
+      opacity: 0;
+      transform: translateX(-40px);
+      filter: drop-shadow(0 0 6px var(--glow-color-start));
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+      filter: drop-shadow(0 0 15px var(--glow-color-mid));
+    }
+  }
+
+  /* Footer */
+  footer {
+    grid-area: footer;
+    position: sticky;
+    bottom: 0;
+    background: rgba(255 255 255 / 0.12);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255 255 255 / 0.25);
+    height: auto;
+    padding: 16px 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--font-color);
+    z-index: 10;
+  }
+
+  footer .social-links {
+    display: flex;
+    gap: 24px;
+    margin-left: 24px;
+  }
+  footer .social-links a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-size: 30px;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  footer .social-links a:hover {
+    color: #60a5fa;
+  }
+  footer .social-links a .material-icons {
+    font-size: 30px;
+  }
+
+  /* Responsive layout */
+  @media (max-width:1023px) {
+    body {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "header"
+        "main"
+        "footer";
+    }
+    aside {
+      display: none;
+    }
+    main {
+      padding: 32px 24px;
+      min-height: calc(100vh - 64px - 48px);
+    }
+    footer {
+      padding: 16px 24px;
+      font-size: 0.85rem;
+      margin-left: 0;
+    }
+    footer .social-links {
+      margin-left: 0;
+      gap: 16px;
+    }
+  }
+
+  @media (max-width:480px) {
+    header {
+      padding: 0 16px;
+      height: 56px;
+    }
+    main h1 {
+      font-size: 2.2rem;
+    }
+    main {
+      padding: 24px 16px;
+    }
+    footer {
+      font-size: 0.8rem;
+      padding: 12px 16px;
+    }
+    footer .social-links a {
+      font-size: 26px;
+    }
+    footer .social-links a .material-icons {
+      font-size: 26px;
+    }
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    main {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+
+  /* SETTINGS PANEL */
+  #settings-panel {
+    position: fixed;
+    top: 64px;
+    right: -320px;
+    width: 320px;
+    height: calc(100% - 64px);
+    background: rgba(255 255 255 / 0.12);
+    backdrop-filter: blur(20px);
+    box-shadow: -4px 0 12px rgba(0,0,0,0.3);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transition: right 0.4s ease;
+    z-index: 100;
+  }
+  #settings-panel.open {
+    right: 0;
+  }
+  #settings-panel h3 {
+    font-weight: 700;
+    color: var(--main-text-color);
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--accent-color);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+  #settings-panel label {
+    font-weight: 600;
+    color: var(--main-text-color);
+    margin-bottom: 6px;
+    display: block;
+  }
+  #settings-panel input[type="color"],
+  #settings-panel select {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: none;
+    font-size: 1rem;
+    font-family: var(--font-family, 'Inter'), sans-serif;
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  #settings-panel input[type="color"] {
+    height: 40px;
+  }
+  #settings-panel select {
+    cursor: pointer;
+  }
+  #settings-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--main-text-color);
+    font-size: 28px;
+    cursor: pointer;
+    margin-left: auto;
+    transition: color 0.3s ease;
+  }
+  #settings-toggle-btn:hover, #settings-toggle-btn:focus {
+    color: var(--accent-color);
+  }
+  /* Responsive panel */
+  @media (max-width: 480px){
+    #settings-panel {
+      width: 90vw;
+      height: calc(100% - 64px);
+    }
+  }
+</style>
+</head>
+<body>
+<header role="banner" aria-label="Site header" style="display:flex; align-items:center; gap:10px;">
+  <div class="brand" tabindex="0" style="flex-shrink:0;">
+    <span class="material-icons" aria-hidden="true">face</span> Dhyan
+  </div>
+  <button id="theme-toggle" aria-label="Toggle color theme" title="Toggle light/dark mode" style="margin-left:auto; background:none; border:none; color: var(--main-text-color); font-size:24px; cursor:pointer;">
+    <span class="material-icons" aria-hidden="true" id="theme-icon">dark_mode</span>
+  </button>
+  <button id="settings-toggle-btn" aria-label="Open settings panel" title="Open settings panel" type="button">
+    <span class="material-icons">settings</span>
+  </button>
+</header>
+
+<aside role="navigation" aria-label="Main navigation">
+  <nav>
+    <a href="#about" tabindex="0"><span class="material-icons" aria-hidden="true">person</span> About Me</a>
+    <a href="#hobbies" tabindex="0"><span class="material-icons" aria-hidden="true">sports_esports</span> Hobbies</a>
+    <a href="#family" tabindex="0"><span class="material-icons" aria-hidden="true">group</span> Family</a>
+    <a href="#contact" tabindex="0"><span class="material-icons" aria-hidden="true">mail</span> Contact</a>
+    <a href="#comments" tabindex="0"><span class="material-icons" aria-hidden="true">comment</span> Comments</a>
+  </nav>
+</aside>
+
+<main role="main" id="main-content">
+  <section id="about">
+    <h1 tabindex="0">Hi, I'm <span class="glow-text-temp">Dhyan</span></h1>
+    <p>Hello! I'm currently in 10th standard and I am learning HTML. I want to become cool by building awesome websites and learning programming skills. This website is my first step towards that goal. I hope you enjoy it!</p>
+  </section>
+
+  <section id="hobbies" style="margin-top: 64px;">
+    <h2 tabindex="0">My Hobbies</h2>
+    <ul>
+      <li>Playing Video Games</li>
+      <li>Watching Tech Tutorials</li>
+      <li>Drawing and Sketching</li>
+      <li>Listening to Music</li>
+    </ul>
+  </section>
+
+  <section id="family" style="margin-top: 64px;">
+    <h2 tabindex="0">My Family</h2>
+    <p>Father: Palkesh Patel</p>
+    <p>Mother: Javnika</p>
+    <p>Sister: Dharvi</p>
+  </section>
+
+  <section id="contact" style="margin-top: 64px;">
+    <h2 tabindex="0">Get in Touch</h2>
+    <p>If you want to reach me, feel free to send me an email at <a href="mailto:dhyan20190@gmail.com">dhyan20190@gmail.com</a>.</p>
+    <p>Follow me on social media:</p>
+    <ul>
+      <li>YouTube: <a href="https://www.youtube.com/@NEXT06GENAI" target="_blank" rel="noopener noreferrer">NEXT06GENAI</a></li>
+      <li>Instagram: <a href="https://www.instagram.com/dhyan._patel_/" target="_blank" rel="noopener noreferrer">dhyan._patel_</a></li>
+    </ul>
+  </section>
+
+  <section id="comments" style="margin-top: 64px;">
+    <h2 tabindex="0">Comments</h2>
+    <form id="comment-form" aria-label="Add a comment" novalidate>
+      <label for="comment-input">Leave a comment:</label>
+      <textarea id="comment-input" name="comment" placeholder="Write your comment here..." required aria-required="true" aria-describedby="comment-error"></textarea>
+      <span id="comment-error" role="alert" style="color:#f87171; font-weight:600; display:none;">Please enter a comment.</span>
+      <button type="submit" id="submit-comment" disabled>Submit</button>
+    </form>
+    <div id="comment-list" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
+  </section>
+</main>
+
+<footer role="contentinfo">
+  <div>© 2024 Dhyan. All rights reserved.</div>
+  <div class="social-links" aria-label="Social media links">
+    <a href="https://www.youtube.com/@NEXT06GENAI" target="_blank" rel="noopener" aria-label="YouTube"><span class="material-icons">youtube_searched_for</span></a>
+    <a href="https://www.instagram.com/dhyan._patel_/" target="_blank" rel="noopener" aria-label="Instagram"><span class="material-icons">photo_camera</span></a>
+  </div>
+</footer>
+
+<!-- Settings Panel -->
+<div id="settings-panel" aria-label="Settings Panel" role="region" aria-hidden="true" tabindex="-1">
+  <h3>Customization Settings</h3>
+
+  <div>
+    <label for="bg-color-picker">Background Color</label>
+    <input type="color" id="bg-color-picker" name="bg-color-picker" aria-describedby="bg-color-desc" />
+    <small id="bg-color-desc">Choose custom background color</small>
+  </div>
+
+  <div>
+    <label for="font-color-picker">Font Color</label>
+    <input type="color" id="font-color-picker" name="font-color-picker" aria-describedby="font-color-desc" />
+    <small id="font-color-desc">Choose main font color</small>
+  </div>
+
+  <div>
+    <label for="main-text-color-picker">Main Text Color</label>
+    <input type="color" id="main-text-color-picker" name="main-text-color-picker" aria-describedby="main-text-color-desc" />
+    <small id="main-text-color-desc">Choose color for headings & important texts</small>
+  </div>
+
+  <div>
+    <label for="font-family-select">Font Style</label>
+    <select id="font-family-select" name="font-family-select" aria-describedby="font-family-desc">
+      <option value="'Inter', sans-serif">Inter (Default)</option>
+      <option value="'Poppins', sans-serif">Poppins</option>
+      <option value="'Comic Neue', cursive, sans-serif">Comic Neue</option>
+      <option value="'Courier New', monospace">Courier New (Monospace)</option>
+      <option value="Georgia, serif">Georgia (Serif)</option>
+    </select>
+    <small id="font-family-desc">Select font style for the website</small>
+  </div>
+
+  <div>
+    <label for="font-size-select">Font Size</label>
+    <select id="font-size-select" name="font-size-select" aria-describedby="font-size-desc">
+      <option value="14px">Small</option>
+      <option value="16px" selected>Medium (Default)</option>
+      <option value="18px">Large</option>
+      <option value="20px">Extra Large</option>
+    </select>
+    <small id="font-size-desc">Select base font size</small>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const form = document.getElementById('comment-form');
+    const input = document.getElementById('comment-input');
+    const submitButton = document.getElementById('submit-comment');
+    const errorMsg = document.getElementById('comment-error');
+    const commentList = document.getElementById('comment-list');
+    const body = document.body;
+
+    // Enable/disable submit button based on input
+    input.addEventListener('input', () => {
+      if(input.value.trim().length > 0) {
+        submitButton.disabled = false;
+        errorMsg.style.display = 'none';
+      } else {
+        submitButton.disabled = true;
+      }
+    });
+
+    // Cursor click effect: briefly show blue arrow for 150ms
+    body.addEventListener('mousedown', () => {
+      body.style.cursor = 'url("data:image/svg+xml;utf8,<svg fill=\'%23006aff\' height=\'32\' viewBox=\'0 0 24 24\' width=\'32\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M2 2l20 10-20 10z\'/></svg>") 0 16, auto';
+      setTimeout(() => {
+        body.style.cursor = 'default';
+      }, 150);
+    });
+
+    // Animate main content slide in from left and blue glow on page load once
+    window.addEventListener('load', () => {
+      const main = document.getElementById('main-content');
+      setTimeout(() => {
+        main.classList.add('loaded');
+      }, 1200);
+
+      const nameSpan = document.querySelector('h1 span.glow-text-temp');
+      if(nameSpan) {
+        nameSpan.style.backgroundSize = '200% 100%';
+        nameSpan.style.animation = 'sheen 2.5s linear 1 forwards';
+        nameSpan.addEventListener('animationend', () => {
+          nameSpan.style.background = 'none';
+          nameSpan.style.color = 'var(--main-text-color)';
+          nameSpan.classList.remove('glow-text-temp');
+        });
+      }
+    });
+
+    // Load comments from localStorage
+    function loadComments() {
+      const saved = localStorage.getItem('comments');
+      if (saved) {
+        const comments = JSON.parse(saved);
+        comments.forEach(addCommentToList);
+      }
+    }
+
+    // Save comments to localStorage
+    function saveComments(comments) {
+      localStorage.setItem('comments', JSON.stringify(comments));
+    }
+
+    // Add a single comment element with fade-in
+    function addCommentToList(comment) {
+      const div = document.createElement('div');
+      div.className = 'comment-item';
+      const p = document.createElement('p');
+      p.textContent = comment.text;
+      const time = document.createElement('time');
+      time.textContent = new Date(comment.timestamp).toLocaleString();
+      div.appendChild(p);
+      div.appendChild(time);
+      commentList.insertBefore(div, commentList.firstChild);
+    }
+
+    // Get existing comments or empty array
+    function getComments() {
+      const saved = localStorage.getItem('comments');
+      return saved ? JSON.parse(saved) : [];
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) {
+        errorMsg.style.display = 'block';
+        input.focus();
+        return;
+      }
+      const comment = { text, timestamp: new Date().toISOString() };
+      addCommentToList(comment);
+      const comments = getComments();
+      comments.push(comment);
+      saveComments(comments);
+      input.value = '';
+      submitButton.disabled = true;
+    });
+
+    // Theme toggle with localStorage persistence
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    function setTheme(theme) {
+      if(theme === 'light'){
+        document.body.classList.add('light-theme');
+        themeIcon.textContent = 'light_mode';
+      } else {
+        document.body.classList.remove('light-theme');
+        themeIcon.textContent = 'dark_mode';
+      }
+      localStorage.setItem('theme', theme);
+      // Remove custom styles using .customized class to re-enable theme colors
+      if(document.body.classList.contains('customized')){
+        document.documentElement.style.removeProperty('--bg-color');
+        document.documentElement.style.removeProperty('--font-color');
+        document.documentElement.style.removeProperty('--main-text-color');
+        document.documentElement.style.removeProperty('--font-family');
+        document.documentElement.style.removeProperty('--font-size');
+        document.body.classList.remove('customized');
+        // Reinitialize settings UI to match theme default after clearing custom styles
+        initSettingsUI();
+      }
+    }
+    themeToggleBtn.addEventListener('click', () => {
+      const isLight = document.body.classList.contains('light-theme');
+      setTheme(isLight ? 'dark' : 'light');
+    });
+    // Initialize theme from localStorage or default dark
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(savedTheme);
+
+    // Settings panel toggling
+    const settingsPanel = document.getElementById('settings-panel');
+    const settingsToggleBtn = document.getElementById('settings-toggle-btn');
+    settingsToggleBtn.addEventListener('click', () => {
+      const expanded = settingsPanel.classList.toggle('open');
+      settingsPanel.setAttribute('aria-hidden', !expanded);
+      if(expanded){
+        settingsPanel.focus();
+      }
+    });
+
+    // References to inputs
+    const bgColorInput = document.getElementById('bg-color-picker');
+    const fontColorInput = document.getElementById('font-color-picker');
+    const mainTextColorInput = document.getElementById('main-text-color-picker');
+    const fontFamilySelect = document.getElementById('font-family-select');
+    const fontSizeSelect = document.getElementById('font-size-select');
+
+    // Initialize settings UI from CSS variables or fallback defaults
+    function initSettingsUI(){
+      const style = getComputedStyle(document.documentElement);
+
+      function rgbToHex(rgb){
+        const result = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/.exec(rgb);
+        return result ? "#" +
+          ("0" + parseInt(result[1],10).toString(16)).slice(-2) +
+          ("0" + parseInt(result[2],10).toString(16)).slice(-2) +
+          ("0" + parseInt(result[3],10).toString(16)).slice(-2) : rgb;
+      }
+      // For bg color, get background color computed - fallback to purple as before
+      let bgVal = style.backgroundColor;
+      bgVal = rgbToHex(bgVal) || '#6366f1';
+
+      bgColorInput.value = localStorage.getItem('custom-bg-color') || bgVal;
+      fontColorInput.value = localStorage.getItem('custom-font-color') || rgbToHex(style.getPropertyValue('--font-color').trim()) || '#f9fafb';
+      mainTextColorInput.value = localStorage.getItem('custom-main-text-color') || rgbToHex(style.getPropertyValue('--main-text-color').trim()) || '#eef2ff';
+
+      fontFamilySelect.value = localStorage.getItem('custom-font-family') || style.getPropertyValue('--font-family').trim().replace(/['"]/g, '') || "'Inter', sans-serif";
+      fontSizeSelect.value = localStorage.getItem('custom-font-size') || style.getPropertyValue('--font-size').trim() || '16px';
+    }
+
+    // Update CSS variables & save settings to localStorage + add 'customized' class to body
+    function updateCssVariable(varName, value, storageKey){
+      document.documentElement.style.setProperty(varName, value);
+      localStorage.setItem(storageKey, value);
+      document.body.classList.add('customized');
+    }
+
+    bgColorInput.addEventListener('input', e => {
+      updateCssVariable('--bg-color', e.target.value, 'custom-bg-color');
+    });
+    fontColorInput.addEventListener('input', e => {
+      updateCssVariable('--font-color', e.target.value, 'custom-font-color');
+    });
+    mainTextColorInput.addEventListener('input', e => {
+      updateCssVariable('--main-text-color', e.target.value, 'custom-main-text-color');
+    });
+    fontFamilySelect.addEventListener('change', e => {
+      updateCssVariable('--font-family', e.target.value, 'custom-font-family');
+    });
+    fontSizeSelect.addEventListener('change', e => {
+      updateCssVariable('--font-size', e.target.value, 'custom-font-size');
+    });
+
+    // On page load apply saved customizations then initialize UI
+    window.addEventListener('load', () => {
+      const savedBg = localStorage.getItem('custom-bg-color');
+      if(savedBg) document.documentElement.style.setProperty('--bg-color', savedBg);
+      const savedFont = localStorage.getItem('custom-font-color');
+      if(savedFont) document.documentElement.style.setProperty('--font-color', savedFont);
+      const savedMainText = localStorage.getItem('custom-main-text-color');
+      if(savedMainText) document.documentElement.style.setProperty('--main-text-color', savedMainText);
+      const savedFontFamily = localStorage.getItem('custom-font-family');
+      if(savedFontFamily) document.documentElement.style.setProperty('--font-family', savedFontFamily);
+      const savedFontSize = localStorage.getItem('custom-font-size');
+      if(savedFontSize) document.documentElement.style.setProperty('--font-size', savedFontSize);
+
+      if(savedBg || savedFont || savedMainText || savedFontFamily || savedFontSize){
+        document.body.classList.add('customized');
+      }
+
+      initSettingsUI();
+    });
+
+  })();
+</script>
+
+</body>
+</html>
+
+
