@@ -288,7 +288,7 @@
 
   <div id="content" role="main" tabindex="-1">
     <button id="mathsBtn" aria-label="Open Maths chapters">Maths</button>
-    <button id="mathsBtn" aria-label="Open Maths chapters">Maths</button>
+    
   </div>
 
   <script>
@@ -296,20 +296,24 @@
     const title = document.getElementById('title');
 
     // PDF links including Chapter 1 dakla as provided, others as null/objective coming soon
-    const pdfLinks = {
-      1: {
-        dakla: 'https://drive.google.com/file/d/1AgFB6iBuT9Ubprai_6uqnpzC-OMgt1au/view?usp=sharing',
-        objective: null,
-      },
-      13: {
-        dakla: 'https://drive.google.com/file/d/10EOWNsaV_J18du1vhfztceF1w7QNnVEb/view?usp=sharing',
-        objective: null,
-      },
-      14: {
-        dakla: 'https://drive.google.com/file/d/1LYfPZx5y2FudhPNgWq_c05ctBvW1hdYP/view?usp=sharing',
-        objective: null,
-      }
-    };
+   const pdfLinks = {
+  1: {
+    dakla: 'https://drive.google.com/file/d/1AgFB6iBuT9Ubprai_6uqnpzC-OMgt1au/view?usp=sharing',
+    objective: 'https://drive.google.com/file/d/14PROipX9UGvtw5usANecZ7doCrAn2wZr/view?usp=drivesdk',
+  },
+  2: {
+    dakla: 'https://drive.google.com/file/d/14f3lk2MB9QKagLBABwkm8cPDrGJYeCjD/view?usp=drivesdk',
+    objective: 'https://drive.google.com/file/d/14WXLpPOQI_gIsDnHZTxFBa6WKoTygiLw/view?usp=drivesdk',
+  },
+  13: {
+    dakla: 'https://drive.google.com/file/d/10EOWNsaV_J18du1vhfztceF1w7QNnVEb/view?usp=sharing',
+    objective: 'https://drive.google.com/file/d/14NhNZfWDN_t0Qh91-kFb3aId3wsGHoI8/view?usp=drivesdk',
+  },
+  14: {
+    dakla: 'https://drive.google.com/file/d/1LYfPZx5y2FudhPNgWq_c05ctBvW1hdYP/view?usp=sharing',
+    objective: 'https://drive.google.com/file/d/14RH_qDOflB0oOEX9IUmcCpa6d1W5mLvI/view?usp=drivesdk',
+  }
+};
 
     // Randomly apply one of three animation modes each time
     const animationModes = ["mode-spin-cw", "mode-spin-ccw", "mode-glow-blink"];
@@ -366,11 +370,12 @@
         document.querySelectorAll('.chapter-btn').forEach(btn => {
           btn.addEventListener('click', () => {
             const chap = parseInt(btn.dataset.chap);
-            if(chap >= 1 && chap <= 12 && !(chap === 1 && pdfLinks[1])) {
-              alert('Coming soon! I will add in further updates.');
-            } else {
-              showChapterOptions(chap);
-            }
+         if(!pdfLinks[chap]) {
+  alert('Coming soon! I will add in further updates.');
+} else {
+  showChapterOptions(chap);
+}
+
           });
         });
 
@@ -397,11 +402,12 @@
         document.querySelectorAll('.option-btn').forEach(btn => {
           btn.addEventListener('click', () => {
             const type = btn.dataset.type;
-            if (type === 'dakla' && pdfLinks[chapter] && pdfLinks[chapter].dakla) {
-              openPDFInNewTab(pdfLinks[chapter].dakla);
-            } else {
-              alert('Coming soon! I will add in further updates.');
-            }
+           if (pdfLinks[chapter] && pdfLinks[chapter][type]) {
+  openPDFInNewTab(pdfLinks[chapter][type]);
+} else {
+  alert('Coming soon! I will add in further updates.');
+}
+
           });
         });
 
