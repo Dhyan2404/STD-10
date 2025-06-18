@@ -1,645 +1,714 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Std 10 - Liquid UI</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    /* --- Base Styles & Reset --- */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Std 10 - Liquid UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Base Styles & Reset --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    html, body {
-      min-height: 100vh; /* Allow scrolling by using min-height */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 1rem;
-      position: relative;
-      font-family: 'Segoe UI', sans-serif;
-      color: #333;
-    }
+        html, body {
+            min-height: 100vh; /* Allow scrolling by using min-height */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            position: relative;
+            font-family: 'Segoe UI', sans-serif;
+            color: #333;
+        }
 
-    /* --- Primary Background Layer --- */
-    #main-background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -3;
-      transition: background 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
+        /* --- Primary Background Layer --- */
+        #main-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            transition: background 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
 
-    /* --- Animated Background (Normal Mode) --- */
-    #animated-background {
-      position: fixed;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(
-        45deg,
-        #ff007f,
-        #00ffff,
-        #ffea00,
-        #7f00ff
-      );
-      background-size: 200% 200%;
-      animation:
-        colorShiftBackground 15s linear infinite alternate,
-        moveBackground 20s linear infinite;
-      z-index: -2;
-      opacity: 0.8;
-      transition: opacity 0.5s ease;
-    }
+        /* --- Animated Background (Normal Mode) --- */
+        #animated-background {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                #ff007f,
+                #00ffff,
+                #ffea00,
+                #7f00ff
+            );
+            background-size: 200% 200%;
+            animation:
+                colorShiftBackground 15s linear infinite alternate,
+                moveBackground 20s linear infinite;
+            z-index: -2;
+            opacity: 0.8;
+            transition: opacity 0.5s ease;
+        }
 
-    /* --- Background Overlay --- */
-    #background-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background-color: transparent;
-      transform: translateX(100%);
-      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
+        /* --- Background Overlay --- */
+        #background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: transparent;
+            transform: translateX(100%);
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
 
-    /* --- Theme Specific Body Classes --- */
-    body.light-mode #main-background {
-      background: linear-gradient(135deg, #cce4f7, #dbeeef);
-    }
-    body.dark-mode #main-background {
-      background: linear-gradient(135deg, #0a0a0a, #1e1e1e);
-    }
-    body.normal-mode #animated-background {
-      opacity: 0.8;
-    }
-    body.light-mode #animated-background,
-    body.dark-mode #animated-background {
-      opacity: 0;
-    }
-    body.light-mode { color: #333; }
-    body.dark-mode { color: #f0f0f0; }
+        /* --- Theme Specific Body Classes --- */
+        body.light-mode #main-background {
+            background: linear-gradient(135deg, #cce4f7, #dbeeef);
+        }
+        body.dark-mode #main-background {
+            background: linear-gradient(135deg, #0a0a0a, #1e1e1e);
+        }
+        body.normal-mode #animated-background {
+            opacity: 0.8;
+        }
+        body.light-mode #animated-background,
+        body.dark-mode #animated-background {
+            opacity: 0;
+        }
+        body.light-mode { color: #333; }
+        body.dark-mode { color: #f0f0f0; }
 
-    /* Keyframe Animations */
-    @keyframes colorShiftBackground {
-      0% { filter: hue-rotate(0deg); }
-      100% { filter: hue-rotate(360deg); }
-    }
-    @keyframes moveBackground {
-      0% { background-position: 0% 0%; }
-      100% { background-position: 100% 100%; }
-    }
+        /* Keyframe Animations */
+        @keyframes colorShiftBackground {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        @keyframes moveBackground {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
 
-    /* --- Liquid Glass Styles --- */
-    .liquid-glass {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(15px) saturate(200%);
-      -webkit-backdrop-filter: blur(15px) saturate(200%);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-      border-radius: 18px;
-      transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                  border 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                  box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                  color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                  transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      position: relative;
-      overflow: hidden;
-      will-change: transform, box-shadow, background, backdrop-filter;
-      color: inherit;
-    }
+        /* --- Liquid Glass Styles --- */
+        .liquid-glass {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px) saturate(200%);
+            -webkit-backdrop-filter: blur(15px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-radius: 18px;
+            transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        border 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            will-change: transform, box-shadow, background, backdrop-filter;
+            color: inherit;
+        }
 
-    .liquid-glass::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0) 50%,
-        rgba(255, 255, 255, 0.05) 100%
-      );
-      mix-blend-mode: overlay;
-      opacity: 0.8;
-      pointer-events: none;
-      animation: liquidShimmer 8s infinite ease-in-out;
-      border-radius: inherit;
-      will-change: transform, opacity;
-    }
+        .liquid-glass::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0) 50%,
+                rgba(255, 255, 255, 0.05) 100%
+            );
+            mix-blend-mode: overlay;
+            opacity: 0.8;
+            pointer-events: none;
+            animation: liquidShimmer 8s infinite ease-in-out;
+            border-radius: inherit;
+            will-change: transform, opacity;
+        }
 
-    @keyframes liquidShimmer {
-      0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.8; }
-      25% { transform: translate(5%, -5%) rotate(2deg); opacity: 0.9; }
-      50% { transform: translate(-5%, 5%) rotate(-2deg); opacity: 0.7; }
-      75% { transform: translate(5%, 5%) rotate(2deg); opacity: 0.9; }
-    }
+        @keyframes liquidShimmer {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.8; }
+            25% { transform: translate(5%, -5%) rotate(2deg); opacity: 0.9; }
+            50% { transform: translate(-5%, 5%) rotate(-2deg); opacity: 0.7; }
+            75% { transform: translate(5%, 5%) rotate(2deg); opacity: 0.9; }
+        }
 
-    /* --- Button Color Changing Logic --- */
-    .color-changing-button {
-      background: linear-gradient(
-        135deg,
-        hsl(0, 70%, 60%),
-        hsl(60, 70%, 60%),
-        hsl(120, 70%, 60%),
-        hsl(180, 70%, 60%),
-        hsl(240, 70%, 60%),
-        hsl(300, 70%, 60%)
-      );
-      background-size: 200% 200%;
-      animation: hueRotateButton 10s linear infinite, moveButtonGradient 10s linear infinite;
-      color: white !important;
-      transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
+        /* --- Button Color Changing Logic --- */
+        .color-changing-button {
+            background: linear-gradient(
+                135deg,
+                hsl(0, 70%, 60%),
+                hsl(60, 70%, 60%),
+                hsl(120, 70%, 60%),
+                hsl(180, 70%, 60%),
+                hsl(240, 70%, 60%),
+                hsl(300, 70%, 60%)
+            );
+            background-size: 200% 200%;
+            animation: hueRotateButton 10s linear infinite, moveButtonGradient 10s linear infinite;
+            color: white !important;
+            transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
 
-    @keyframes hueRotateButton {
-      0% { filter: hue-rotate(0deg); }
-      100% { filter: hue-rotate(360deg); }
-    }
-    @keyframes moveButtonGradient {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
-    }
+        @keyframes hueRotateButton {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        @keyframes moveButtonGradient {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
 
-    /* --- UI Element Styling --- */
-    .title-container {
-      display: inline-block;
-      padding: 0.2em 1.2em;
-      font-weight: 900;
-      letter-spacing: 4px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 3rem;
-      user-select: none;
-      margin-bottom: 2rem;
-      z-index: 1;
-      color: inherit;
-    }
+        /* --- UI Element Styling --- */
+        .title-container {
+            display: inline-block;
+            padding: 0.2em 1.2em;
+            font-weight: 900;
+            letter-spacing: 4px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 3rem;
+            user-select: none;
+            margin-bottom: 2rem;
+            z-index: 1;
+            color: inherit;
+        }
 
-    #content {
-      max-width: 700px;
-      width: 100%;
-      padding: 2rem;
-      text-align: center;
-      min-height: 360px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      opacity: 1;
-      will-change: opacity;
-      color: inherit;
-      z-index: 1;
-      transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
+        #content {
+            max-width: 700px;
+            width: 100%;
+            padding: 2rem;
+            text-align: center;
+            min-height: 360px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 1;
+            will-change: opacity;
+            color: inherit;
+            z-index: 1;
+            transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
 
-    button, .btn {
-      border: none;
-      padding: 1rem 2rem;
-      font-size: 1.2rem;
-      cursor: pointer;
-      box-shadow: none;
-      margin: 0.5rem;
-      min-width: 140px;
-      user-select: none;
-      font-weight: 700;
-      font-family: 'Poppins', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      transform-origin: center center;
-      z-index: 1;
-      color: inherit;
-    }
+        button, .btn {
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: none;
+            margin: 0.5rem;
+            min-width: 140px;
+            user-select: none;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            transform-origin: center center;
+            z-index: 1;
+            color: inherit;
+        }
 
-    .chapter-btn, .option-btn {
-      flex: 1 0 28%;
-      margin: 0.6rem;
-      padding: 1rem 0;
-      font-size: 1.1rem;
-      box-shadow: none;
-    }
+        .chapter-list, .option-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.2rem; /* Adjusted gap for better spacing */
+            margin-bottom: 1.5rem; /* Space before back button */
+        }
 
-    #backBtn {
-      margin-top: 1.5rem;
-      box-shadow: none;
-      color: #5a1a1a;
-    }
+        .chapter-btn, .option-btn {
+            flex: 1 0 28%; /* Keeps 3 items per row on larger screens */
+            margin: 0; /* Remove individual margin as gap handles it */
+            padding: 1rem 0;
+            font-size: 1.1rem;
+            box-shadow: none;
+            display: flex; /* Enable flex for content within button */
+            align-items: center; /* Vertically center content */
+            justify-content: center; /* Horizontally center content */
+            position: relative; /* For indicator positioning */
+        }
 
-    .theme-toggle {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      z-index: 999;
-      padding: 0.7rem 1.2rem;
-      font-weight: 600;
-      cursor: pointer;
-      color: inherit;
-      box-shadow: none;
-    }
+        /* Chapter Availability Indicator */
+        .chapter-btn .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            position: absolute;
+            top: 8px; /* Position top-right */
+            right: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Slight border for visibility */
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+        }
 
-    /* --- CommonNinja Comment Section Styling --- */
-    .commonninja_component {
-      margin-top: 1rem;
-      margin-bottom: 2rem; /* Ensure space at bottom for scrolling */
-      padding: 1rem;
-      border-radius: 18px;
-      transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                  color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      max-width: 700px;
-      width: 100%;
-      z-index: 1;
-    }
+        /* Indicator colors based on availability and theme */
+        .chapter-btn .indicator.available {
+            background-color: #4CAF50; /* Green for available */
+        }
+        .chapter-btn .indicator.unavailable {
+            background-color: #F44336; /* Red for unavailable */
+        }
 
-    body.normal-mode .commonninja_component {
-      background: rgba(255, 255, 255, 0.15);
-      color: #333;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
+        /* Light/Dark mode indicator overrides */
+        body.light-mode .chapter-btn .indicator.available,
+        body.dark-mode .chapter-btn .indicator.available {
+            background-color: #66BB6A; /* Lighter green for other modes */
+        }
 
-    body.light-mode .commonninja_component {
-      background: rgba(255, 255, 255, 0.4);
-      color: #1a2935;
-      border: 1px solid rgba(255, 255, 255, 0.6);
-    }
+        body.light-mode .chapter-btn .indicator.unavailable,
+        body.dark-mode .chapter-btn .indicator.unavailable {
+            background-color: #EF5350; /* Lighter red for other modes */
+        }
 
-    body.dark-mode .commonninja_component {
-      background: rgba(30, 30, 30, 0.4);
-      color: #f0f0f0;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+        #backBtn {
+            margin-top: 1.5rem;
+            box-shadow: none;
+            color: #5a1a1a;
+        }
 
-    /* --- Normal Mode Hover/Focus --- */
-    body.normal-mode button:hover, body.normal-mode .btn:hover,
-    body.normal-mode .chapter-btn:hover, body.normal-mode .option-btn:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow:
-        0 8px 16px rgba(0, 0, 0, 0.2),
-        0 0 50px rgba(255, 0, 127, 0.5), /* Pink glow */
-        0 0 80px rgba(0, 255, 255, 0.3); /* Cyan glow */
-    }
-    body.normal-mode #backBtn:hover {
-      box-shadow:
-        0 8px 16px rgba(0, 0, 0, 0.2),
-        0 0 50px rgba(255, 0, 127, 0.5),
-        0 0 80px rgba(0, 255, 255, 0.3);
-    }
-    body.normal-mode button:focus, body.normal-mode .btn:focus {
-      outline: none;
-      box-shadow:
-        0 0 0 3px rgba(255, 0, 127, 0.6),
-        0 0 12px 4px rgba(0, 255, 255, 0.4);
-    }
-    body.normal-mode .color-changing-button:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow:
-        0 8px 16px rgba(0, 0, 0, 0.2),
-        0 0 50px hsl(var(--hue, 0), 100%, 70%, 0.5),
-        0 0 80px hsl(var(--hue, 0), 100%, 60%, 0.3);
-    }
-    body.normal-mode .color-changing-button:focus {
-      outline: none;
-      box-shadow:
-        0 0 0 3px hsl(var(--hue, 0), 100%, 70%, 0.6),
-        0 0 12px 4px hsl(var(--hue, 0), 100%, 70%, 0.4);
-    }
+        body.dark-mode #backBtn {
+            color: #f0f0f0;
+        }
 
-    /* --- Light Mode Overrides --- */
-    body.light-mode .liquid-glass {
-      background: rgba(255, 255, 255, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      border-right-color: rgba(255, 255, 255, 0.3);
-      border-bottom-color: rgba(255, 255, 255, 0.3);
-      box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.1),
-        0 0 30px rgba(100, 150, 200, 0.1),
-        0 0 50px rgba(150, 200, 250, 0.05);
-      color: #1a2935;
-    }
-    body.light-mode .liquid-glass::before {
-      background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.2) 0%,
-        rgba(255, 255, 255, 0) 50%,
-        rgba(255, 255, 255, 0.1) 100%
-      );
-    }
-    body.light-mode button:hover, body.light-mode .btn:hover,
-    body.light-mode .chapter-btn:hover, body.light-mode .option-btn:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow:
-        0 8px 16px rgba(0, 0, 0, 0.2),
-        0 0 50px rgba(74, 123, 189, 0.5), /* Blue glow */
-        0 0 80px rgba(74, 123, 189, 0.3);
-    }
-    body.light-mode #backBtn:hover {
-      box-shadow:
-        0 8px 16px rgba(0, 0, 0, 0.2),
-        0 0 50px rgba(74, 123, 189, 0.5),
-        0 0 80px rgba(74, 123, 189, 0.3);
-    }
-    body.light-mode button:focus, body.light-mode .btn:focus {
-      outline: none;
-      box-shadow:
-        0 0 0 3px rgba(74, 123, 189, 0.6),
-        0 0 12px 4px rgba(74, 123, 189, 0.4);
-    }
+        .theme-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 999;
+            padding: 0.7rem 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: inherit;
+            box-shadow: none;
+        }
 
-    /* --- Dark Mode Overrides --- */
-    body.dark-mode .liquid-glass {
-      background: rgba(30, 30, 30, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-right-color: rgba(255, 255, 255, 0.05);
-      border-bottom-color: rgba(255, 255, 255, 0.05);
-      box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.3),
-        0 0 40px rgba(0, 150, 150, 0.1),
-        0 0 60px rgba(150, 0, 150, 0.05);
-      color: #f0f0f0;
-    }
-    body.dark-mode .liquid-glass::before {
-      background: linear-gradient(
-        135deg,
-        rgba(50, 50, 50, 0.1) 0%,
-        rgba(50, 50, 50, 0) 50%,
-        rgba(50, 50, 50, 0.05) 100%
-      );
-    }
-    body.dark-mode button:hover, body.dark-mode .btn:hover,
-    body.dark-mode .chapter-btn:hover, body.dark-mode .option-btn:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow:
-        0 8px 16px rgba(0, 0, 0, 0.4),
-        0 0 50px rgba(255, 165, 0, 0.5), /* Orange glow */
-        0 0 80px rgba(255, 140, 0, 0.3);
-    }
-    body.dark-mode #backBtn:hover {
-      box-shadow:
-        0 8px 16px rgba(0, 0, 0, 0.4),
-        0 0 50px rgba(255, 165, 0, 0.5),
-        0 0 80px rgba(255, 140, 0, 0.3);
-    }
-    body.dark-mode button:focus, body.dark-mode .btn:focus {
-      outline: none;
-      box-shadow:
-        0 0 0 3px rgba(255, 165, 0, 0.6),
-        0 0 12px 4px rgba(255, 165, 0, 0.4);
-    }
+        /* --- CommonNinja Comment Section Styling --- */
+        .commonninja_component {
+            margin-top: 1rem;
+            margin-bottom: 2rem; /* Ensure space at bottom for scrolling */
+            padding: 1rem;
+            border-radius: 18px;
+            transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            max-width: 700px;
+            width: 100%;
+            z-index: 1;
+        }
 
-    body.dark-mode #backBtn {
-      color: #f0f0f0;
-    }
+        body.normal-mode .commonninja_component {
+            background: rgba(255, 255, 255, 0.15);
+            color: #333;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      h1, .title-container { font-size: 2.2rem; }
-      .chapter-btn, .option-btn { flex: 1 0 45%; padding: 0.8rem 0; font-size: 1rem; }
-      #content { padding: 1.5rem; min-height: auto; }
-      button, .btn { min-width: 120px; font-size: 1rem; padding: 0.8rem 1.5rem; }
-      .commonninja_component { padding: 0.8rem; }
-    }
-    @media (max-width: 400px) {
-      .chapter-btn, .option-btn { flex: 1 0 90%; padding: 0.7rem 0; font-size: 0.95rem; }
-      button, .btn { min-width: 100px; font-size: 0.9rem; padding: 0.7rem 1rem; }
-      .commonninja_component { padding: 0.6rem; }
-    }
-  </style>
+        body.light-mode .commonninja_component {
+            background: rgba(255, 255, 255, 0.4);
+            color: #1a2935;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        body.dark-mode .commonninja_component {
+            background: rgba(30, 30, 30, 0.4);
+            color: #f0f0f0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Normal Mode Hover/Focus --- */
+        body.normal-mode button:hover, body.normal-mode .btn:hover,
+        body.normal-mode .chapter-btn:hover, body.normal-mode .option-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow:
+                0 8px 16px rgba(0, 0, 0, 0.2),
+                0 0 50px rgba(255, 0, 127, 0.5), /* Pink glow */
+                0 0 80px rgba(0, 255, 255, 0.3); /* Cyan glow */
+        }
+        body.normal-mode #backBtn:hover {
+            box-shadow:
+                0 8px 16px rgba(0, 0, 0, 0.2),
+                0 0 50px rgba(255, 0, 127, 0.5),
+                0 0 80px rgba(0, 255, 255, 0.3);
+        }
+        body.normal-mode button:focus, body.normal-mode .btn:focus {
+            outline: none;
+            box-shadow:
+                0 0 0 3px rgba(255, 0, 127, 0.6),
+                0 0 12px 4px rgba(0, 255, 255, 0.4);
+        }
+        body.normal-mode .color-changing-button:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow:
+                0 8px 16px rgba(0, 0, 0, 0.2),
+                0 0 50px hsl(var(--hue, 0), 100%, 70%, 0.5),
+                0 0 80px hsl(var(--hue, 0), 100%, 60%, 0.3);
+        }
+        body.normal-mode .color-changing-button:focus {
+            outline: none;
+            box-shadow:
+                0 0 0 3px hsl(var(--hue, 0), 100%, 70%, 0.6),
+                0 0 12px 4px hsl(var(--hue, 0), 100%, 70%, 0.4);
+        }
+
+        /* --- Light Mode Overrides --- */
+        body.light-mode .liquid-glass {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-right-color: rgba(255, 255, 255, 0.3);
+            border-bottom-color: rgba(255, 255, 255, 0.3);
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.1),
+                0 0 30px rgba(100, 150, 200, 0.1),
+                0 0 50px rgba(150, 200, 250, 0.05);
+            color: #1a2935;
+        }
+        body.light-mode .liquid-glass::before {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.2) 0%,
+                rgba(255, 255, 255, 0) 50%,
+                rgba(255, 255, 255, 0.1) 100%
+            );
+        }
+        body.light-mode button:hover, body.light-mode .btn:hover,
+        body.light-mode .chapter-btn:hover, body.light-mode .option-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow:
+                0 8px 16px rgba(0, 0, 0, 0.2),
+                0 0 50px rgba(74, 123, 189, 0.5), /* Blue glow */
+                0 0 80px rgba(74, 123, 189, 0.3);
+        }
+        body.light-mode #backBtn:hover {
+            box-shadow:
+                0 8px 16px rgba(0, 0, 0, 0.2),
+                0 0 50px rgba(74, 123, 189, 0.5),
+                0 0 80px rgba(74, 123, 189, 0.3);
+        }
+        body.light-mode button:focus, body.light-mode .btn:focus {
+            outline: none;
+            box-shadow:
+                0 0 0 3px rgba(74, 123, 189, 0.6),
+                0 0 12px 4px rgba(74, 123, 189, 0.4);
+        }
+
+        /* --- Dark Mode Overrides --- */
+        body.dark-mode .liquid-glass {
+            background: rgba(30, 30, 30, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-right-color: rgba(255, 255, 255, 0.05);
+            border-bottom-color: rgba(255, 255, 255, 0.05);
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(0, 150, 150, 0.1),
+                0 0 60px rgba(150, 0, 150, 0.05);
+            color: #f0f0f0;
+        }
+        body.dark-mode .liquid-glass::before {
+            background: linear-gradient(
+                135deg,
+                rgba(50, 50, 50, 0.1) 0%,
+                rgba(50, 50, 50, 0) 50%,
+                rgba(50, 50, 50, 0.05) 100%
+            );
+        }
+        body.dark-mode button:hover, body.dark-mode .btn:hover,
+        body.dark-mode .chapter-btn:hover, body.dark-mode .option-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow:
+                0 8px 16px rgba(0, 0, 0, 0.4),
+                0 0 50px rgba(255, 165, 0, 0.5), /* Orange glow */
+                0 0 80px rgba(255, 140, 0, 0.3);
+        }
+        body.dark-mode #backBtn:hover {
+            box-shadow:
+                0 8px 16px rgba(0, 0, 0, 0.4),
+                0 0 50px rgba(255, 165, 0, 0.5),
+                0 0 80px rgba(255, 140, 0, 0.3);
+        }
+        body.dark-mode button:focus, body.dark-mode .btn:focus {
+            outline: none;
+            box-shadow:
+                0 0 0 3px rgba(255, 165, 0, 0.6),
+                0 0 12px 4px rgba(255, 165, 0, 0.4);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1, .title-container { font-size: 2.2rem; }
+            .chapter-btn, .option-btn { flex: 1 0 45%; padding: 0.8rem 0; font-size: 1rem; }
+            #content { padding: 1.5rem; min-height: auto; }
+            button, .btn { min-width: 120px; font-size: 1rem; padding: 0.8rem 1.5rem; }
+            .commonninja_component { padding: 0.8rem; }
+            .chapter-list, .option-list { gap: 1rem; } /* Slightly smaller gap on tablets */
+            .chapter-btn .indicator {
+                width: 10px; /* Smaller indicator on smaller screens */
+                height: 10px;
+                top: 6px;
+                right: 6px;
+            }
+        }
+        @media (max-width: 480px) { /* More aggressive for small phones */
+            h1, .title-container { font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 1.5rem;}
+            .chapter-btn, .option-btn { flex: 1 0 90%; padding: 0.7rem 0; font-size: 0.95rem; }
+            button, .btn { min-width: 100px; font-size: 0.9rem; padding: 0.7rem 1rem; }
+            .commonninja_component { padding: 0.6rem; }
+            .chapter-list, .option-list { gap: 0.8rem; } /* Even smaller gap on phones */
+            .theme-toggle {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<div id="main-background"></div>
-<div id="animated-background"></div>
-<div id="background-overlay"></div>
+    <div id="main-background"></div>
+    <div id="animated-background"></div>
+    <div id="background-overlay"></div>
 
-<button class="theme-toggle liquid-glass" id="themeToggle"></button>
+    <button class="theme-toggle liquid-glass" id="themeToggle"></button>
 
-<div class="title-container liquid-glass" id="title">Std 10</div>
-   
-<div id="content" class="liquid-glass" role="main" tabindex="-1"></div>
-<script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
+    <div class="title-container liquid-glass" id="title">Std 10</div>
+        
+    <div id="content" class="liquid-glass" role="main" tabindex="-1"></div>
+    <script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
 <div class="commonninja_component pid-88eb78c5-d649-40ea-bbd8-b0bf84bfa343"></div>
 <script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
 <div class="commonninja_component pid-c848a80a-ea99-45e6-bfba-a0bde6356fc1"></div>
 
-<script>
-    const content = document.getElementById('content');
-    const title = document.getElementById('title');
-    const themeToggle = document.getElementById('themeToggle');
-    const mainBackground = document.getElementById('main-background');
-    const animatedBackground = document.getElementById('animated-background');
-    const backgroundOverlay = document.getElementById('background-overlay');
-    const commentContainer = document.querySelector('.commonninja_component');
+    <script>
+        const content = document.getElementById('content');
+        const title = document.getElementById('title');
+        const themeToggle = document.getElementById('themeToggle');
+        const mainBackground = document.getElementById('main-background');
+        const animatedBackground = document.getElementById('animated-background');
+        const backgroundOverlay = document.getElementById('background-overlay');
+        const commentContainer1 = document.querySelector('.commonninja_component.pid-88eb78c5-d649-40ea-bbd8-b0bf84bfa343');
+        const commentContainer2 = document.querySelector('.commonninja_component.pid-c848a80a-ea99-45e6-bfba-b0bf84bfa343');
 
-    const themeStates = ['normal', 'light', 'dark'];
-    const themeLabels = {
-        'normal': '☀️ Switch to Light',
-        'light': '🌙 Switch to Dark',
-        'dark': '✨ Switch to Normal'
-    };
-    let currentThemeIndex = 2; // START AT DARK MODE
+        const themeStates = ['normal', 'light', 'dark'];
+        const themeLabels = {
+            'normal': '☀️ Switch to Light',
+            'light': '🌙 Switch to Dark',
+            'dark': '✨ Switch to Normal'
+        };
+        let currentThemeIndex = 2; // START AT DARK MODE
 
-    function applyBackground(theme) {
-        if (theme === 'light') {
-            mainBackground.style.background = 'linear-gradient(135deg, #cce4f7, #dbeeef)';
-        } else if (theme === 'dark') {
-            mainBackground.style.background = 'linear-gradient(135deg, #0a0a0a, #1e1e1e)';
-        } else {
-            mainBackground.style.background = 'transparent';
-        }
-        if (theme === 'normal') {
-            animatedBackground.style.opacity = '0.8';
-        } else {
-            animatedBackground.style.opacity = '0';
-        }
-    }
-
-    function animateBackgroundSlide(oldTheme, newTheme, callback) {
-        let overlayColor = '';
-        if (oldTheme === 'light') overlayColor = 'linear-gradient(135deg, #cce4f7, #dbeeef)';
-        else if (oldTheme === 'dark') overlayColor = 'linear-gradient(135deg, #0a0a0a, #1e1e1e)';
-        else overlayColor = 'transparent';
-
-        backgroundOverlay.style.background = overlayColor;
-        backgroundOverlay.style.transform = 'translateX(0)';
-        setTimeout(() => {
-            applyBackground(newTheme);
-            document.body.style.color = (newTheme === 'dark') ? '#f0f0f0' : '#333';
-            backgroundOverlay.style.transform = 'translateX(-100%)';
-            setTimeout(() => {
-                backgroundOverlay.style.transition = 'none';
-                backgroundOverlay.style.transform = 'translateX(100%)';
-                backgroundOverlay.style.background = 'transparent';
-                setTimeout(() => {
-                    backgroundOverlay.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                }, 50);
-                if (callback) callback();
-            }, 600);
-        }, 50);
-    }
-
-    function updateTheme(initialLoad = false) {
-        const oldTheme = themeStates[currentThemeIndex];
-        const newTheme = themeStates[currentThemeIndex];
-
-        document.body.classList.remove('normal-mode', 'light-mode', 'dark-mode');
-        document.body.classList.add(`${newTheme}-mode`);
-        themeToggle.textContent = themeLabels[newTheme];
-
-        if (initialLoad) {
-            applyBackground(newTheme);
-            document.body.style.color = (newTheme === 'dark') ? '#f0f0f0' : '#333';
-        } else {
-            animateBackgroundSlide(oldTheme, newTheme, () => {
-                document.body.style.color = (newTheme === 'dark') ? '#f0f0f0' : '#333';
-            });
-        }
-
-        // Update Comment Section Theme
-        commentContainer.classList.remove('normal-mode', 'light-mode', 'dark-mode');
-        commentContainer.classList.add(`${newTheme}-mode`);
-
-        // Attempt to dynamically update CommonNinja widget (placeholder)
-        if (window.CommonNinja) {
-            try {
-                const themeConfig = {
-                    normal: { background: 'rgba(255, 255, 255, 0.15)', text: '#333' },
-                    light: { background: 'rgba(255, 255, 255, 0.4)', text: '#1a2935' },
-                    dark: { background: 'rgba(30, 30, 30, 0.4)', text: '#f0f0f0' }
-                };
-                console.log(`Updating CommonNinja widget to ${newTheme} mode:`, themeConfig[newTheme]);
-            } catch (e) {
-                console.warn('CommonNinja theme update not supported:', e);
+        function applyBackground(theme) {
+            if (theme === 'light') {
+                mainBackground.style.background = 'linear-gradient(135deg, #cce4f7, #dbeeef)';
+            } else if (theme === 'dark') {
+                mainBackground.style.background = 'linear-gradient(135deg, #0a0a0a, #1e1e1e)';
+            } else {
+                mainBackground.style.background = 'transparent';
+            }
+            if (theme === 'normal') {
+                animatedBackground.style.opacity = '0.8';
+            } else {
+                animatedBackground.style.opacity = '0';
             }
         }
 
-        document.querySelectorAll('button.liquid-glass, .btn.liquid-glass').forEach(btn => {
-            if (btn.id !== 'themeToggle') {
-                if (newTheme === 'normal') {
-                    btn.classList.add('color-changing-button');
-                    let hue = Math.floor(Math.random() * 360);
-                    btn.style.setProperty('--hue', hue);
-                    if (!btn.hueInterval) {
-                        btn.hueInterval = setInterval(() => {
-                            hue = (hue + 1) % 360;
-                            btn.style.setProperty('--hue', hue);
-                        }, 50);
-                    }
-                } else {
-                    btn.classList.remove('color-changing-button');
-                    btn.style.removeProperty('--hue');
-                    if (btn.hueInterval) {
-                        clearInterval(btn.hueInterval);
-                        btn.hueInterval = null;
-                    }
+        function animateBackgroundSlide(oldTheme, newTheme, callback) {
+            let overlayColor = '';
+            if (oldTheme === 'light') overlayColor = 'linear-gradient(135deg, #cce4f7, #dbeeef)';
+            else if (oldTheme === 'dark') overlayColor = 'linear-gradient(135deg, #0a0a0a, #1e1e1e)';
+            else overlayColor = 'transparent';
+
+            backgroundOverlay.style.background = overlayColor;
+            backgroundOverlay.style.transform = 'translateX(0)';
+            setTimeout(() => {
+                applyBackground(newTheme);
+                document.body.style.color = (newTheme === 'dark') ? '#f0f0f0' : '#333';
+                backgroundOverlay.style.transform = 'translateX(-100%)';
+                setTimeout(() => {
+                    backgroundOverlay.style.transition = 'none';
+                    backgroundOverlay.style.transform = 'translateX(100%)';
+                    backgroundOverlay.style.background = 'transparent';
+                    setTimeout(() => {
+                        backgroundOverlay.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    }, 50);
+                    if (callback) callback();
+                }, 600);
+            }, 50);
+        }
+
+        function updateTheme(initialLoad = false) {
+            const oldTheme = themeStates[currentThemeIndex];
+            const newTheme = themeStates[currentThemeIndex];
+
+            document.body.classList.remove('normal-mode', 'light-mode', 'dark-mode');
+            document.body.classList.add(`${newTheme}-mode`);
+            themeToggle.textContent = themeLabels[newTheme];
+
+            if (initialLoad) {
+                applyBackground(newTheme);
+                document.body.style.color = (newTheme === 'dark') ? '#f0f0f0' : '#333';
+            } else {
+                animateBackgroundSlide(oldTheme, newTheme, () => {
+                    document.body.style.color = (newTheme === 'dark') ? '#f0f0f0' : '#333';
+                });
+            }
+
+            // Update Comment Section Theme
+            if (commentContainer1) {
+                commentContainer1.classList.remove('normal-mode', 'light-mode', 'dark-mode');
+                commentContainer1.classList.add(`${newTheme}-mode`);
+            }
+            if (commentContainer2) {
+                commentContainer2.classList.remove('normal-mode', 'light-mode', 'dark-mode');
+                commentContainer2.classList.add(`${newTheme}-mode`);
+            }
+
+            // Attempt to dynamically update CommonNinja widget (placeholder)
+            if (window.CommonNinja) {
+                try {
+                    const themeConfig = {
+                        normal: { background: 'rgba(255, 255, 255, 0.15)', text: '#333' },
+                        light: { background: 'rgba(255, 255, 255, 0.4)', text: '#1a2935' },
+                        dark: { background: 'rgba(30, 30, 30, 0.4)', text: '#f0f0f0' }
+                    };
+                    console.log(`Updating CommonNinja widget to ${newTheme} mode:`, themeConfig[newTheme]);
+                } catch (e) {
+                    console.warn('CommonNinja theme update not supported:', e);
                 }
             }
-        });
-    }
 
-    const pdfLinks = {
-        1: { dakla: 'https://drive.google.com/file/d/1AgFB6iBuT9Ubprai_6uqnpzC-OMgt1au/view?usp=sharing', objective: 'https://drive.google.com/file/d/14PROipX9UGvtw5usANecZ7doCrAn2wZr/view?usp=drivesdk' },
-        2: { dakla: 'https://drive.google.com/file/d/14f3lk2MB9QKagLBABwkm8cPDrGJYeCjD/view?usp=drivesdk', objective: 'https://drive.google.com/file/d/14WXLpPOQI_gIsDnHZTxFBa6WKoTygiLw/view?usp=drivesdk' },
-        13: { dakla: 'https://drive.google.com/file/d/10EOWNsaV_J18du1vhfztceF1w7QNnVEb/view?usp=sharing', objective: 'https://drive.google.com/file/d/14NhNZfWDN_t0Qh91-kFb3aId3wsGHoI8/view?usp=drivesdk' },
-        14: { dakla: 'https://drive.google.com/file/d/1LYfPZx5y2FudhPNgWq_c05ctBvW1hdYP/view?usp=sharing', objective: 'https://drive.google.com/file/d/14RH_qDOflB0oOEX9IUmcCpa6d1W5mLvI/view?usp=drivesdk' }
-    };
-
-    function transitionContent(newHtml, callback) {
-        content.style.opacity = '0';
-        setTimeout(() => {
-            content.innerHTML = newHtml;
-            content.style.opacity = '1';
-            if (callback) callback();
-            content.focus();
-            updateTheme(true);
-        }, 300);
-    }
-
-    function mainPage() {
-        const html = `
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
-                <button id="mathsBtn" aria-label="Open Maths chapters" class="liquid-glass">Maths</button>
-                <a href="about.html" rel="noopener" class="btn liquid-glass" style="text-decoration: none; text-align: center;">About Me</a>
-            </div>
-        `;
-        transitionContent(html, () => {
-            document.getElementById('mathsBtn').addEventListener('click', showChapters);
-            document.getElementById('mathsBtn').focus();
-        });
-    }
-
-    function showChapters() {
-        title.textContent = 'Maths - Chapters';
-        let html = '<div class="chapter-list" role="list">';
-        for(let i=1; i<=14; i++) {
-            const buttonClass = (themeStates[currentThemeIndex] === 'normal') ? 'color-changing-button' : '';
-            html += `<button class="chapter-btn liquid-glass ${buttonClass}" data-chap="${i}" role="listitem" aria-label="Open Chapter ${i}">Chapter ${i}</button>`;
+            document.querySelectorAll('button.liquid-glass, .btn.liquid-glass').forEach(btn => {
+                if (btn.id !== 'themeToggle') {
+                    if (newTheme === 'normal') {
+                        btn.classList.add('color-changing-button');
+                        let hue = Math.floor(Math.random() * 360);
+                        btn.style.setProperty('--hue', hue);
+                        if (!btn.hueInterval) {
+                            btn.hueInterval = setInterval(() => {
+                                hue = (hue + 1) % 360;
+                                btn.style.setProperty('--hue', hue);
+                            }, 50);
+                        }
+                    } else {
+                        btn.classList.remove('color-changing-button');
+                        btn.style.removeProperty('--hue');
+                        if (btn.hueInterval) {
+                            clearInterval(btn.hueInterval);
+                            btn.hueInterval = null;
+                        }
+                    }
+                }
+            });
         }
-        html += '</div>';
-        html += '<button id="backBtn" aria-label="Back to main page" class="liquid-glass">Back</button>';
 
-        transitionContent(html, () => {
-            document.querySelectorAll('.chapter-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const chap = parseInt(btn.dataset.chap);
-                    if(!pdfLinks[chap]) alert('Coming soon! I will add in further updates.');
-                    else showChapterOptions(chap);
-                });
+        const pdfLinks = {
+            1: { dakla: 'https://drive.google.com/file/d/1AgFB6iBuT9Ubprai_6uqnpzC-OMgt1au/view?usp=sharing', objective: 'https://drive.google.com/file/d/14PROipX9UGvtw5usANecZ7doCrAn2wZr/view?usp=drivesdk' },
+            2: { dakla: 'https://drive.google.com/file/d/14f3lk2MB9QKagLBABwkm8cPDrGJYeCjD/view?usp=drivesdk', objective: 'https://drive.google.com/file/d/14WXLpPOQI_gIsDnHZTxFBa6WKoTygiLw/view?usp=drivesdk' },
+            13: { dakla: 'https://drive.google.com/file/d/10EOWNsaV_J18du1vhfztceF1w7QNnVEb/view?usp=sharing', objective: 'https://drive.google.com/file/d/14NhNZfWDN_t0Qh91-kFb3aId3wsGHoI8/view?usp=drivesdk' },
+            14: { dakla: 'https://drive.google.com/file/d/1LYfPZx5y2FudhPNgWq_c05ctBvW1hdYP/view?usp=sharing', objective: 'https://drive.google.com/file/d/14RH_qDOflB0oOEX9IUmcCpa6d1W5mLvI/view?usp=drivesdk' }
+        };
+
+        function transitionContent(newHtml, callback) {
+            content.style.opacity = '0';
+            setTimeout(() => {
+                content.innerHTML = newHtml;
+                content.style.opacity = '1';
+                if (callback) callback();
+                content.focus();
+                updateTheme(true); // Re-apply theme to new elements
+            }, 300);
+        }
+
+        function mainPage() {
+            const html = `
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
+                    <button id="mathsBtn" aria-label="Open Maths chapters" class="liquid-glass">Maths</button>
+                    <a href="about.html" rel="noopener" class="btn liquid-glass" style="text-decoration: none; text-align: center;">About Me</a>
+                </div>
+            `;
+            transitionContent(html, () => {
+                document.getElementById('mathsBtn').addEventListener('click', showChapters);
+                document.getElementById('mathsBtn').focus();
             });
-            document.getElementById('backBtn').addEventListener('click', () => { title.textContent = 'Std 10'; mainPage(); });
-            document.getElementById('backBtn').focus();
-        });
-    }
+        }
 
-    function showChapterOptions(chapter) {
-        title.textContent = `Chapter ${chapter} Options`;
-        let html = `
-            <div class="option-list" role="list">
-                <button class="option-btn liquid-glass ${themeStates[currentThemeIndex] === 'normal' ? 'color-changing-button' : ''}" data-type="dakla" role="listitem" aria-label="Open Dakla for Chapter ${chapter}">Dakla</button>
-                <button class="option-btn liquid-glass ${themeStates[currentThemeIndex] === 'normal' ? 'color-changing-button' : ''}" data-type="objective" role="listitem" aria-label="Open Objective for Chapter ${chapter}">Objective</button>
-            </div>
-            <button id="backBtn" aria-label="Back to chapters list" class="liquid-glass">Back</button>
-        `;
-        transitionContent(html, () => {
-            document.querySelectorAll('.option-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const type = btn.dataset.type;
-                    if (pdfLinks[chapter] && pdfLinks[chapter][type]) openPDFInNewTab(pdfLinks[chapter][type]);
-                    else alert('Coming soon! I will add in further updates.');
+        function showChapters() {
+            title.textContent = 'Maths - Chapters';
+            let html = '<div class="chapter-list" role="list">';
+            for(let i=1; i<=14; i++) {
+                const buttonClass = (themeStates[currentThemeIndex] === 'normal') ? 'color-changing-button' : '';
+                const isChapterAvailable = pdfLinks[i] && (pdfLinks[i].dakla || pdfLinks[i].objective);
+                const indicatorClass = isChapterAvailable ? 'available' : 'unavailable';
+                html += `
+                    <button class="chapter-btn liquid-glass ${buttonClass}" data-chap="${i}" role="listitem" aria-label="Open Chapter ${i}">
+                        Chapter ${i}
+                        <span class="indicator ${indicatorClass}"></span>
+                    </button>`;
+            }
+            html += '</div>';
+            html += '<button id="backBtn" aria-label="Back to main page" class="liquid-glass">Back</button>';
+
+            transitionContent(html, () => {
+                document.querySelectorAll('.chapter-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const chap = parseInt(btn.dataset.chap);
+                        if(!pdfLinks[chap]) alert('Coming soon! I will add in further updates.');
+                        else showChapterOptions(chap);
+                    });
                 });
+                document.getElementById('backBtn').addEventListener('click', () => { title.textContent = 'Std 10'; mainPage(); });
+                document.getElementById('backBtn').focus();
             });
-            document.getElementById('backBtn').addEventListener('click', showChapters);
-            document.getElementById('backBtn').focus();
+        }
+
+        function showChapterOptions(chapter) {
+            title.textContent = `Chapter ${chapter} Options`;
+            let html = `
+                <div class="option-list" role="list">
+                    <button class="option-btn liquid-glass ${themeStates[currentThemeIndex] === 'normal' ? 'color-changing-button' : ''}" data-type="dakla" role="listitem" aria-label="Open Dakla for Chapter ${chapter}">Dakla</button>
+                    <button class="option-btn liquid-glass ${themeStates[currentThemeIndex] === 'normal' ? 'color-changing-button' : ''}" data-type="objective" role="listitem" aria-label="Open Objective for Chapter ${chapter}">Objective</button>
+                </div>
+                <button id="backBtn" aria-label="Back to chapters list" class="liquid-glass">Back</button>
+            `;
+            transitionContent(html, () => {
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const type = btn.dataset.type;
+                        if (pdfLinks[chapter] && pdfLinks[chapter][type]) openPDFInNewTab(pdfLinks[chapter][type]);
+                        else alert('Coming soon! I will add in further updates.');
+                    });
+                });
+                document.getElementById('backBtn').addEventListener('click', showChapters);
+                document.getElementById('backBtn').focus();
+            });
+        }
+
+        function openPDFInNewTab(url) {
+            window.open(url, '_blank', 'noopener');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('dark-mode');
+            applyBackground('dark');
+            document.body.style.color = '#f0f0f0';
+            mainPage();
+            themeToggle.textContent = themeLabels[themeStates[currentThemeIndex]];
         });
-    }
 
-    function openPDFInNewTab(url) {
-        window.open(url, '_blank', 'noopener');
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        document.body.classList.add('dark-mode');
-        applyBackground('dark');
-        document.body.style.color = '#f0f0f0';
-        mainPage();
-        themeToggle.textContent = themeLabels[themeStates[currentThemeIndex]];
-    });
-
-    themeToggle.addEventListener('click', () => {
-        const oldTheme = themeStates[currentThemeIndex];
-        currentThemeIndex = (currentThemeIndex + 1) % themeStates.length;
-        const newTheme = themeStates[currentThemeIndex];
-        document.body.classList.remove('normal-mode', 'light-mode', 'dark-mode');
-        document.body.classList.add(`${newTheme}-mode`);
-        animateBackgroundSlide(oldTheme, newTheme);
-        updateTheme(true);
-    });
-</script>
+        themeToggle.addEventListener('click', () => {
+            const oldTheme = themeStates[currentThemeIndex];
+            currentThemeIndex = (currentThemeIndex + 1) % themeStates.length;
+            const newTheme = themeStates[currentThemeIndex];
+            document.body.classList.remove('normal-mode', 'light-mode', 'dark-mode');
+            document.body.classList.add(`${newTheme}-mode`);
+            animateBackgroundSlide(oldTheme, newTheme);
+            updateTheme(true); // Call updateTheme with initialLoad=true after animation for final state
+        });
+    </script>
 </body>
 </html>
