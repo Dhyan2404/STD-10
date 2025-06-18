@@ -15,32 +15,29 @@
     }
 
     html, body {
-      height: 100%;
-      overflow: hidden; /* Prevent scrollbars from background animation and overlay */
+      min-height: 100vh; /* Allow scrolling by using min-height */
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       padding: 1rem;
-      position: relative; /* For background layers */
+      position: relative;
       font-family: 'Segoe UI', sans-serif;
-      color: #333; /* Default text color for Normal/Light mode */
+      color: #333;
     }
 
-    /* --- Primary Background Layer (Static for Light/Dark, Hidden for Normal) --- */
+    /* --- Primary Background Layer --- */
     #main-background {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: -3; /* Below the animated background and overlay */
-      transition: background 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth fade for direct background changes */
+      z-index: -3;
+      transition: background 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
-    /* --- Animated Background (Normal Mode Only - Layer 2) --- */
+    /* --- Animated Background (Normal Mode) --- */
     #animated-background {
-      content: '';
       position: fixed;
       top: -50%;
       left: -50%;
@@ -48,31 +45,31 @@
       height: 200%;
       background: linear-gradient(
         45deg,
-        #ff007f, /* Vibrant Pink */
-        #00ffff, /* Cyan */
-        #ffea00, /* Yellow */
-        #7f00ff  /* Purple */
+        #ff007f,
+        #00ffff,
+        #ffea00,
+        #7f00ff
       );
       background-size: 200% 200%;
       animation:
         colorShiftBackground 15s linear infinite alternate,
         moveBackground 20s linear infinite;
-      z-index: -2; /* Above main-background, below content and overlay */
+      z-index: -2;
       opacity: 0.8;
-      transition: opacity 0.5s ease; /* Smooth fade in/out for this layer */
+      transition: opacity 0.5s ease;
     }
 
-    /* --- Background Overlay for Sliding Animation (Layer 3) --- */
+    /* --- Background Overlay --- */
     #background-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: -1; /* Above backgrounds, below content */
-      background-color: transparent; /* Default */
-      transform: translateX(100%); /* Start off-screen to the right */
-      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth slide animation */
+      z-index: -1;
+      background-color: transparent;
+      transform: translateX(100%);
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
     /* --- Theme Specific Body Classes --- */
@@ -83,11 +80,11 @@
       background: linear-gradient(135deg, #0a0a0a, #1e1e1e);
     }
     body.normal-mode #animated-background {
-      opacity: 0.8; /* Visible in normal mode */
+      opacity: 0.8;
     }
     body.light-mode #animated-background,
     body.dark-mode #animated-background {
-      opacity: 0; /* Hidden in light/dark mode */
+      opacity: 0;
     }
     body.light-mode { color: #333; }
     body.dark-mode { color: #f0f0f0; }
@@ -102,7 +99,7 @@
       100% { background-position: 100% 100%; }
     }
 
-    /* --- Base Liquid Glass Styles --- */
+    /* --- Liquid Glass Styles --- */
     .liquid-glass {
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(15px) saturate(200%);
@@ -121,7 +118,6 @@
       color: inherit;
     }
 
-    /* Inner Shimmer/Highlight (Same across all modes for consistency in glass effect) */
     .liquid-glass::before {
       content: '';
       position: absolute;
@@ -150,45 +146,30 @@
       75% { transform: translate(5%, 5%) rotate(2deg); opacity: 0.9; }
     }
 
-    /* --- Button Color Changing Logic (Only in Normal Mode) --- */
+    /* --- Button Color Changing Logic --- */
     .color-changing-button {
-        background: linear-gradient(
-            135deg,
-            hsl(0, 70%, 60%),
-            hsl(60, 70%, 60%),
-            hsl(120, 70%, 60%),
-            hsl(180, 70%, 60%),
-            hsl(240, 70%, 60%),
-            hsl(300, 70%, 60%)
-        );
-        background-size: 200% 200%;
-        animation: hueRotateButton 10s linear infinite, moveButtonGradient 10s linear infinite;
-        color: white !important;
-        transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      background: linear-gradient(
+        135deg,
+        hsl(0, 70%, 60%),
+        hsl(60, 70%, 60%),
+        hsl(120, 70%, 60%),
+        hsl(180, 70%, 60%),
+        hsl(240, 70%, 60%),
+        hsl(300, 70%, 60%)
+      );
+      background-size: 200% 200%;
+      animation: hueRotateButton 10s linear infinite, moveButtonGradient 10s linear infinite;
+      color: white !important;
+      transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
     @keyframes hueRotateButton {
-        0% { filter: hue-rotate(0deg); }
-        100% { filter: hue-rotate(360deg); }
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
     }
     @keyframes moveButtonGradient {
-        0% { background-position: 0% 50%; }
-        100% { background-position: 100% 50%; }
-    }
-
-    /* Hover for color-changing buttons */
-    .color-changing-button:hover {
-        transform: translateY(-4px) scale(1.02);
-        box-shadow:
-            0 8px 16px rgba(0, 0, 0, 0.2),
-            0 0 50px hsl(var(--hue, 0), 100%, 70%, 0.5),
-            0 0 80px hsl(var(--hue, 0), 100%, 60%, 0.3);
-    }
-    .color-changing-button:focus {
-        outline: none;
-        box-shadow:
-            0 0 0 3px hsl(var(--hue, 0), 100%, 70%, 0.5),
-            0 0 12px 4px hsl(var(--hue, 0), 100%, 70%, 0.3);
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
     }
 
     /* --- UI Element Styling --- */
@@ -265,6 +246,72 @@
       box-shadow: none;
     }
 
+    /* --- CommonNinja Comment Section Styling --- */
+    .commonninja_component {
+      margin-top: 1rem;
+      margin-bottom: 2rem; /* Ensure space at bottom for scrolling */
+      padding: 1rem;
+      border-radius: 18px;
+      transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      max-width: 700px;
+      width: 100%;
+      z-index: 1;
+    }
+
+    body.normal-mode .commonninja_component {
+      background: rgba(255, 255, 255, 0.15);
+      color: #333;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    body.light-mode .commonninja_component {
+      background: rgba(255, 255, 255, 0.4);
+      color: #1a2935;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    body.dark-mode .commonninja_component {
+      background: rgba(30, 30, 30, 0.4);
+      color: #f0f0f0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* --- Normal Mode Hover/Focus --- */
+    body.normal-mode button:hover, body.normal-mode .btn:hover,
+    body.normal-mode .chapter-btn:hover, body.normal-mode .option-btn:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow:
+        0 8px 16px rgba(0, 0, 0, 0.2),
+        0 0 50px rgba(255, 0, 127, 0.5), /* Pink glow */
+        0 0 80px rgba(0, 255, 255, 0.3); /* Cyan glow */
+    }
+    body.normal-mode #backBtn:hover {
+      box-shadow:
+        0 8px 16px rgba(0, 0, 0, 0.2),
+        0 0 50px rgba(255, 0, 127, 0.5),
+        0 0 80px rgba(0, 255, 255, 0.3);
+    }
+    body.normal-mode button:focus, body.normal-mode .btn:focus {
+      outline: none;
+      box-shadow:
+        0 0 0 3px rgba(255, 0, 127, 0.6),
+        0 0 12px 4px rgba(0, 255, 255, 0.4);
+    }
+    body.normal-mode .color-changing-button:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow:
+        0 8px 16px rgba(0, 0, 0, 0.2),
+        0 0 50px hsl(var(--hue, 0), 100%, 70%, 0.5),
+        0 0 80px hsl(var(--hue, 0), 100%, 60%, 0.3);
+    }
+    body.normal-mode .color-changing-button:focus {
+      outline: none;
+      box-shadow:
+        0 0 0 3px hsl(var(--hue, 0), 100%, 70%, 0.6),
+        0 0 12px 4px hsl(var(--hue, 0), 100%, 70%, 0.4);
+    }
+
     /* --- Light Mode Overrides --- */
     body.light-mode .liquid-glass {
       background: rgba(255, 255, 255, 0.4);
@@ -290,18 +337,18 @@
       transform: translateY(-4px) scale(1.02);
       box-shadow:
         0 8px 16px rgba(0, 0, 0, 0.2),
-        0 0 50px rgba(74, 123, 189, 0.4),
-        0 0 80px rgba(74, 123, 189, 0.2);
+        0 0 50px rgba(74, 123, 189, 0.5), /* Blue glow */
+        0 0 80px rgba(74, 123, 189, 0.3);
     }
     body.light-mode #backBtn:hover {
-       box-shadow:
+      box-shadow:
         0 8px 16px rgba(0, 0, 0, 0.2),
-        0 0 50px rgba(242, 140, 140, 0.4),
-        0 0 80px rgba(242, 140, 140, 0.2);
+        0 0 50px rgba(74, 123, 189, 0.5),
+        0 0 80px rgba(74, 123, 189, 0.3);
     }
     body.light-mode button:focus, body.light-mode .btn:focus {
-        outline: none;
-        box-shadow:
+      outline: none;
+      box-shadow:
         0 0 0 3px rgba(74, 123, 189, 0.6),
         0 0 12px 4px rgba(74, 123, 189, 0.4);
     }
@@ -326,30 +373,29 @@
         rgba(50, 50, 50, 0.05) 100%
       );
     }
-    /* Dark mode hover/focus (ORANGE glow) */
     body.dark-mode button:hover, body.dark-mode .btn:hover,
     body.dark-mode .chapter-btn:hover, body.dark-mode .option-btn:hover {
       transform: translateY(-4px) scale(1.02);
       box-shadow:
         0 8px 16px rgba(0, 0, 0, 0.4),
-        0 0 50px rgba(255, 165, 0, 0.5), /* ORANGE glow */
+        0 0 50px rgba(255, 165, 0, 0.5), /* Orange glow */
         0 0 80px rgba(255, 140, 0, 0.3);
     }
     body.dark-mode #backBtn:hover {
-       box-shadow:
+      box-shadow:
         0 8px 16px rgba(0, 0, 0, 0.4),
-        0 0 50px rgba(255, 165, 0, 0.5), /* ORANGE glow */
+        0 0 50px rgba(255, 165, 0, 0.5),
         0 0 80px rgba(255, 140, 0, 0.3);
     }
     body.dark-mode button:focus, body.dark-mode .btn:focus {
-        outline: none;
-        box-shadow:
-        0 0 0 3px rgba(255, 165, 0, 0.6), /* ORANGE focus ring */
+      outline: none;
+      box-shadow:
+        0 0 0 3px rgba(255, 165, 0, 0.6),
         0 0 12px 4px rgba(255, 165, 0, 0.4);
     }
 
     body.dark-mode #backBtn {
-      color: #f0f0f0; /* Ensure back button text is light in dark mode */
+      color: #f0f0f0;
     }
 
     /* Responsive adjustments */
@@ -358,10 +404,12 @@
       .chapter-btn, .option-btn { flex: 1 0 45%; padding: 0.8rem 0; font-size: 1rem; }
       #content { padding: 1.5rem; min-height: auto; }
       button, .btn { min-width: 120px; font-size: 1rem; padding: 0.8rem 1.5rem; }
+      .commonninja_component { padding: 0.8rem; }
     }
     @media (max-width: 400px) {
       .chapter-btn, .option-btn { flex: 1 0 90%; padding: 0.7rem 0; font-size: 0.95rem; }
       button, .btn { min-width: 100px; font-size: 0.9rem; padding: 0.7rem 1rem; }
+      .commonninja_component { padding: 0.6rem; }
     }
   </style>
 </head>
@@ -374,8 +422,11 @@
 
 <div class="title-container liquid-glass" id="title">Std 10</div>
    
-<div id="content" class="liquid-glass" role="main" tabindex="-1">
-  </div>
+<div id="content" class="liquid-glass" role="main" tabindex="-1"></div>
+<script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
+<div class="commonninja_component pid-88eb78c5-d649-40ea-bbd8-b0bf84bfa343"></div>
+<script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
+<div class="commonninja_component pid-c848a80a-ea99-45e6-bfba-a0bde6356fc1"></div>
 
 <script>
     const content = document.getElementById('content');
@@ -384,6 +435,7 @@
     const mainBackground = document.getElementById('main-background');
     const animatedBackground = document.getElementById('animated-background');
     const backgroundOverlay = document.getElementById('background-overlay');
+    const commentContainer = document.querySelector('.commonninja_component');
 
     const themeStates = ['normal', 'light', 'dark'];
     const themeLabels = {
@@ -391,20 +443,16 @@
         'light': '🌙 Switch to Dark',
         'dark': '✨ Switch to Normal'
     };
-    let currentThemeIndex = 2; // START AT DARK MODE (index 2)
+    let currentThemeIndex = 2; // START AT DARK MODE
 
-    // Function to apply background styles based on theme
     function applyBackground(theme) {
-        // Handle main-background (static colors)
         if (theme === 'light') {
             mainBackground.style.background = 'linear-gradient(135deg, #cce4f7, #dbeeef)';
         } else if (theme === 'dark') {
             mainBackground.style.background = 'linear-gradient(135deg, #0a0a0a, #1e1e1e)';
-        } else { // Normal mode, main-background is implicitly covered/not used
-             mainBackground.style.background = 'transparent'; // Ensure it's not interfering
+        } else {
+            mainBackground.style.background = 'transparent';
         }
-
-        // Handle animated-background visibility
         if (theme === 'normal') {
             animatedBackground.style.opacity = '0.8';
         } else {
@@ -412,70 +460,67 @@
         }
     }
 
-    // Function to perform the background slide animation
     function animateBackgroundSlide(oldTheme, newTheme, callback) {
         let overlayColor = '';
         if (oldTheme === 'light') overlayColor = 'linear-gradient(135deg, #cce4f7, #dbeeef)';
         else if (oldTheme === 'dark') overlayColor = 'linear-gradient(135deg, #0a0a0a, #1e1e1e)';
-        else overlayColor = 'transparent'; // Normal mode background is animated
+        else overlayColor = 'transparent';
 
-        // Set overlay's background to the OLD theme's color
         backgroundOverlay.style.background = overlayColor;
-
-        // Immediately move overlay into view
         backgroundOverlay.style.transform = 'translateX(0)';
-
-        // After a short delay, slide it out and apply the new theme
         setTimeout(() => {
-            // Apply the new theme's *actual* background directly
             applyBackground(newTheme);
-
-            // Apply body text color directly
             document.body.style.color = (newTheme === 'dark') ? '#f0f0f0' : '#333';
-            
-            // Slide the overlay out of view
             backgroundOverlay.style.transform = 'translateX(-100%)';
-
-            // Reset overlay after it's out of view
             setTimeout(() => {
-                backgroundOverlay.style.transition = 'none'; // Disable transition for instant reset
-                backgroundOverlay.style.transform = 'translateX(100%)'; // Reset to start position
-                backgroundOverlay.style.background = 'transparent'; // Clear color
-                // Re-enable transition for next animation cycle
+                backgroundOverlay.style.transition = 'none';
+                backgroundOverlay.style.transform = 'translateX(100%)';
+                backgroundOverlay.style.background = 'transparent';
                 setTimeout(() => {
                     backgroundOverlay.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                }, 50); // Small delay to ensure transition property is re-applied
+                }, 50);
                 if (callback) callback();
-            }, 600); // Duration of the slide animation
-        }, 50); // Small delay to ensure overlay is rendered before animation starts
+            }, 600);
+        }, 50);
     }
 
-    // Function to update the entire theme based on currentThemeIndex
     function updateTheme(initialLoad = false) {
-        const oldTheme = themeStates[currentThemeIndex]; // Capture current before updating index
-        const newTheme = themeStates[currentThemeIndex]; // This will be the same as oldTheme on initial call
+        const oldTheme = themeStates[currentThemeIndex];
+        const newTheme = themeStates[currentThemeIndex];
 
-        // Update body class for styling
         document.body.classList.remove('normal-mode', 'light-mode', 'dark-mode');
         document.body.classList.add(`${newTheme}-mode`);
-        
-        // Update the theme toggle button's text
         themeToggle.textContent = themeLabels[newTheme];
 
         if (initialLoad) {
-            applyBackground(newTheme); // Apply immediately without animation on initial load
+            applyBackground(newTheme);
             document.body.style.color = (newTheme === 'dark') ? '#f0f0f0' : '#333';
         } else {
-            // Perform slide animation for background
             animateBackgroundSlide(oldTheme, newTheme, () => {
-                // After background animation completes, ensure body color is correct
-                 document.body.style.color = (newTheme === 'dark') ? '#f0f0f0' : '#333';
+                document.body.style.color = (newTheme === 'dark') ? '#f0f0f0' : '#333';
             });
         }
 
-        // Manage button specific color-changing behavior
+        // Update Comment Section Theme
+        commentContainer.classList.remove('normal-mode', 'light-mode', 'dark-mode');
+        commentContainer.classList.add(`${newTheme}-mode`);
+
+        // Attempt to dynamically update CommonNinja widget (placeholder)
+        if (window.CommonNinja) {
+            try {
+                const themeConfig = {
+                    normal: { background: 'rgba(255, 255, 255, 0.15)', text: '#333' },
+                    light: { background: 'rgba(255, 255, 255, 0.4)', text: '#1a2935' },
+                    dark: { background: 'rgba(30, 30, 30, 0.4)', text: '#f0f0f0' }
+                };
+                console.log(`Updating CommonNinja widget to ${newTheme} mode:`, themeConfig[newTheme]);
+            } catch (e) {
+                console.warn('CommonNinja theme update not supported:', e);
+            }
+        }
+
         document.querySelectorAll('button.liquid-glass, .btn.liquid-glass').forEach(btn => {
-            if (btn.id !== 'themeToggle') { // Exclude the theme toggle button itself
+            if (btn.id !== 'themeToggle') {
                 if (newTheme === 'normal') {
                     btn.classList.add('color-changing-button');
                     let hue = Math.floor(Math.random() * 360);
@@ -498,7 +543,6 @@
         });
     }
 
-    // PDF links (unchanged)
     const pdfLinks = {
         1: { dakla: 'https://drive.google.com/file/d/1AgFB6iBuT9Ubprai_6uqnpzC-OMgt1au/view?usp=sharing', objective: 'https://drive.google.com/file/d/14PROipX9UGvtw5usANecZ7doCrAn2wZr/view?usp=drivesdk' },
         2: { dakla: 'https://drive.google.com/file/d/14f3lk2MB9QKagLBABwkm8cPDrGJYeCjD/view?usp=drivesdk', objective: 'https://drive.google.com/file/d/14WXLpPOQI_gIsDnHZTxFBa6WKoTygiLw/view?usp=drivesdk' },
@@ -506,114 +550,96 @@
         14: { dakla: 'https://drive.google.com/file/d/1LYfPZx5y2FudhPNgWq_c05ctBvW1hdYP/view?usp=sharing', objective: 'https://drive.google.com/file/d/14RH_qDOflB0oOEX9IUmcCpa6d1W5mLvI/view?usp=drivesdk' }
     };
 
-    function applyRandomAnimationMode() { /* not directly used for title glow animations anymore */ }
-
-    // Handles fading content in/out and updates theme for new content
     function transitionContent(newHtml, callback) {
-      content.style.opacity = '0';
-      setTimeout(() => {
-        content.innerHTML = newHtml;
-        content.style.opacity = '1';
-        if (callback) callback();
-        content.focus();
-        updateTheme(true); // Re-apply theme to new buttons without slide animation
-      }, 300);
+        content.style.opacity = '0';
+        setTimeout(() => {
+            content.innerHTML = newHtml;
+            content.style.opacity = '1';
+            if (callback) callback();
+            content.focus();
+            updateTheme(true);
+        }, 300);
     }
 
     function mainPage() {
-      const html = `
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
-          <button id="mathsBtn" aria-label="Open Maths chapters" class="liquid-glass">Maths</button>
-          <a href="about.html" rel="noopener" class="btn liquid-glass" style="text-decoration: none; text-align: center;">About Me</a>
-        </div>
-      `;
-      transitionContent(html, () => {
-        document.getElementById('mathsBtn').addEventListener('click', showChapters);
-        document.getElementById('mathsBtn').focus();
-      });
+        const html = `
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
+                <button id="mathsBtn" aria-label="Open Maths chapters" class="liquid-glass">Maths</button>
+                <a href="about.html" rel="noopener" class="btn liquid-glass" style="text-decoration: none; text-align: center;">About Me</a>
+            </div>
+        `;
+        transitionContent(html, () => {
+            document.getElementById('mathsBtn').addEventListener('click', showChapters);
+            document.getElementById('mathsBtn').focus();
+        });
     }
 
     function showChapters() {
-      title.textContent = 'Maths - Chapters';
-      let html = '<div class="chapter-list" role="list">';
-      for(let i=1; i<=14; i++) {
-        const buttonClass = (themeStates[currentThemeIndex] === 'normal') ? 'color-changing-button' : '';
-        html += `<button class="chapter-btn liquid-glass ${buttonClass}" data-chap="${i}" role="listitem" aria-label="Open Chapter ${i}">Chapter ${i}</button>`;
-      }
-      html += '</div>';
-      html += '<button id="backBtn" aria-label="Back to main page" class="liquid-glass">Back</button>';
+        title.textContent = 'Maths - Chapters';
+        let html = '<div class="chapter-list" role="list">';
+        for(let i=1; i<=14; i++) {
+            const buttonClass = (themeStates[currentThemeIndex] === 'normal') ? 'color-changing-button' : '';
+            html += `<button class="chapter-btn liquid-glass ${buttonClass}" data-chap="${i}" role="listitem" aria-label="Open Chapter ${i}">Chapter ${i}</button>`;
+        }
+        html += '</div>';
+        html += '<button id="backBtn" aria-label="Back to main page" class="liquid-glass">Back</button>';
 
-      transitionContent(html, () => {
-        document.querySelectorAll('.chapter-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const chap = parseInt(btn.dataset.chap);
-            if(!pdfLinks[chap]) alert('Coming soon! I will add in further updates.');
-            else showChapterOptions(chap);
-          });
+        transitionContent(html, () => {
+            document.querySelectorAll('.chapter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const chap = parseInt(btn.dataset.chap);
+                    if(!pdfLinks[chap]) alert('Coming soon! I will add in further updates.');
+                    else showChapterOptions(chap);
+                });
+            });
+            document.getElementById('backBtn').addEventListener('click', () => { title.textContent = 'Std 10'; mainPage(); });
+            document.getElementById('backBtn').focus();
         });
-        document.getElementById('backBtn').addEventListener('click', () => { title.textContent = 'Std 10'; mainPage(); });
-        document.getElementById('backBtn').focus();
-      });
     }
 
     function showChapterOptions(chapter) {
-      title.textContent = `Chapter ${chapter} Options`;
-      let html = `
-        <div class="option-list" role="list">
-          <button class="option-btn liquid-glass ${themeStates[currentThemeIndex] === 'normal' ? 'color-changing-button' : ''}" data-type="dakla" role="listitem" aria-label="Open Dakla for Chapter ${chapter}">Dakla</button>
-          <button class="option-btn liquid-glass ${themeStates[currentThemeIndex] === 'normal' ? 'color-changing-button' : ''}" data-type="objective" role="listitem" aria-label="Open Objective for Chapter ${chapter}">Objective</button>
-        </div>
-        <button id="backBtn" aria-label="Back to chapters list" class="liquid-glass">Back</button>
-      `;
-      transitionContent(html, () => {
-        document.querySelectorAll('.option-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const type = btn.dataset.type;
-            if (pdfLinks[chapter] && pdfLinks[chapter][type]) openPDFInNewTab(pdfLinks[chapter][type]);
-            else alert('Coming soon! I will add in further updates.');
-          });
+        title.textContent = `Chapter ${chapter} Options`;
+        let html = `
+            <div class="option-list" role="list">
+                <button class="option-btn liquid-glass ${themeStates[currentThemeIndex] === 'normal' ? 'color-changing-button' : ''}" data-type="dakla" role="listitem" aria-label="Open Dakla for Chapter ${chapter}">Dakla</button>
+                <button class="option-btn liquid-glass ${themeStates[currentThemeIndex] === 'normal' ? 'color-changing-button' : ''}" data-type="objective" role="listitem" aria-label="Open Objective for Chapter ${chapter}">Objective</button>
+            </div>
+            <button id="backBtn" aria-label="Back to chapters list" class="liquid-glass">Back</button>
+        `;
+        transitionContent(html, () => {
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const type = btn.dataset.type;
+                    if (pdfLinks[chapter] && pdfLinks[chapter][type]) openPDFInNewTab(pdfLinks[chapter][type]);
+                    else alert('Coming soon! I will add in further updates.');
+                });
+            });
+            document.getElementById('backBtn').addEventListener('click', showChapters);
+            document.getElementById('backBtn').focus();
         });
-        document.getElementById('backBtn').addEventListener('click', showChapters);
-        document.getElementById('backBtn').focus();
-      });
     }
 
     function openPDFInNewTab(url) {
-      window.open(url, '_blank', 'noopener');
+        window.open(url, '_blank', 'noopener');
     }
 
-    // --- Initial Page Load and Theme Setup ---
     document.addEventListener('DOMContentLoaded', () => {
-        // Immediately apply the initial dark theme (visuals) without animation
-        // This ensures the page starts visually in dark mode.
         document.body.classList.add('dark-mode');
         applyBackground('dark');
-        document.body.style.color = '#f0f0f0'; // Ensure text color is set immediately
-
-        // Then, load the main content
-        mainPage(); // This will call transitionContent, which then calls updateTheme(true)
-        
-        // Finally, set the theme toggle button's initial text
+        document.body.style.color = '#f0f0f0';
+        mainPage();
         themeToggle.textContent = themeLabels[themeStates[currentThemeIndex]];
     });
 
-    // --- Theme Toggle Click Handler ---
     themeToggle.addEventListener('click', () => {
-        const oldTheme = themeStates[currentThemeIndex]; // Capture current theme BEFORE updating index
-        currentThemeIndex = (currentThemeIndex + 1) % themeStates.length; // Cycle through modes
-        const newTheme = themeStates[currentThemeIndex]; // Get the new theme
-
-        // Update body class first (for overall styling)
+        const oldTheme = themeStates[currentThemeIndex];
+        currentThemeIndex = (currentThemeIndex + 1) % themeStates.length;
+        const newTheme = themeStates[currentThemeIndex];
         document.body.classList.remove('normal-mode', 'light-mode', 'dark-mode');
         document.body.classList.add(`${newTheme}-mode`);
-
-        // Perform the slide animation for the background
         animateBackgroundSlide(oldTheme, newTheme);
-        
-        // Update button states and theme toggle text after the animation starts
-        updateTheme(true); // Pass true to avoid re-triggering the slide animation within updateTheme
+        updateTheme(true);
     });
-
 </script>
 </body>
 </html>
