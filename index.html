@@ -23,6 +23,7 @@
             position: relative;
             font-family: 'Segoe UI', sans-serif;
             color: #333;
+            overflow-x: hidden; /* Prevent horizontal scroll due to parallax */
         }
 
         /* --- Primary Background Layer --- */
@@ -32,8 +33,25 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -3;
+            z-index: -4; /* Lower z-index than parallax */
             transition: background 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* --- Parallax Background Layer --- */
+        #parallax-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://source.unsplash.com/random/1920x1080/?abstract,geometric'); /* Replace with your actual parallax image */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -3; /* Between main and animated */
+            will-change: transform; /* Optimize for smooth animation */
+            transition: opacity 0.5s ease, filter 0.5s ease;
+            opacity: 0.7; /* Default opacity for normal mode */
         }
 
         /* --- Animated Background (Normal Mode) --- */
@@ -54,7 +72,7 @@
             animation:
                 colorShiftBackground 15s linear infinite alternate,
                 moveBackground 20s linear infinite;
-            z-index: -2;
+            z-index: -2; /* Above parallax */
             opacity: 0.8;
             transition: opacity 0.5s ease;
         }
@@ -88,6 +106,20 @@
         }
         body.light-mode { color: #333; }
         body.dark-mode { color: #f0f0f0; }
+
+        /* Parallax background specific styling for modes */
+        body.normal-mode #parallax-background {
+            opacity: 0.7;
+            filter: grayscale(0%) brightness(100%); /* Original for normal */
+        }
+        body.light-mode #parallax-background {
+            opacity: 0.6;
+            filter: grayscale(30%) brightness(120%); /* Lighter for light mode */
+        }
+        body.dark-mode #parallax-background {
+            opacity: 0.4;
+            filter: grayscale(70%) brightness(50%); /* Darker for dark mode */
+        }
 
         /* Keyframe Animations */
         @keyframes colorShiftBackground {
@@ -150,12 +182,12 @@
         .color-changing-button {
             background: linear-gradient(
                 135deg,
-                hsl(0, 70%, 60%),
-                hsl(60, 70%, 60%),
-                hsl(120, 70%, 60%),
-                hsl(180, 70%, 60%),
-                hsl(240, 70%, 60%),
-                hsl(300, 70%, 60%)
+                hsl(var(--hue, 0), 70%, 60%),
+                hsl(calc(var(--hue, 0) + 60), 70%, 60%),
+                hsl(calc(var(--hue, 0) + 120), 70%, 60%),
+                hsl(calc(var(--hue, 0) + 180), 70%, 60%),
+                hsl(calc(var(--hue, 0) + 240), 70%, 60%),
+                hsl(calc(var(--hue, 0) + 300), 70%, 60%)
             );
             background-size: 200% 200%;
             animation: hueRotateButton 10s linear infinite, moveButtonGradient 10s linear infinite;
@@ -218,6 +250,20 @@
             transform-origin: center center;
             z-index: 1;
             color: inherit;
+            display: flex; /* Added for icon/text alignment */
+            align-items: center; /* Added for icon/text alignment */
+            justify-content: center; /* Added for icon/text alignment */
+            gap: 8px; /* Space between icon and text */
+        }
+
+        .button-icon {
+            /* Placeholder for YouTube icon */
+            width: 24px; /* Adjust as needed */
+            height: 24px; /* Adjust as needed */
+            background-color: currentColor; /* Will pick up button text color */
+            mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.543 6.495c-.234-.848-.966-1.58-1.814-1.814C18.49 4.32 12 4.32 12 4.32s-6.49 0-7.729.361c-.848.234-1.58.966-1.814 1.814C2.32 7.51 2.32 12 2.32 12s0 4.49.361 5.729c.234.848.966 1.58 1.814 1.814C5.51 19.68 12 19.68 12 19.68s6.49 0 7.729-.361c.848-.234 1.58-.966 1.814-1.814C21.68 16.49 21.68 12 21.68 12s0-4.49-.361-5.729zM9.99 15.606V8.394L15.667 12l-5.677 3.606z"/></svg>') no-repeat center / contain;
+            -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.543 6.495c-.234-.848-.966-1.58-1.814-1.814C18.49 4.32 12 4.32 12 4.32s-6.49 0-7.729.361c-.848.234-1.58.966-1.814 1.814C2.32 7.51 2.32 12 2.32 12s0 4.49.361 5.729c.234.848.966 1.58 1.814 1.814C5.51 19.68 12 19.68 12 19.68s6.49 0 7.729-.361c.848-.234 1.58-.966 1.814-1.814C21.68 16.49 21.68 12 21.68 12s0-4.49-.361-5.729zM9.99 15.606V8.394L15.667 12l-5.677 3.606z"/></svg>') no-repeat center / contain;
+            transition: background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .chapter-list, .option-list {
@@ -300,7 +346,7 @@
             padding: 1rem;
             border-radius: 18px;
             transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                        color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                                color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             max-width: 700px;
             width: 100%;
             z-index: 1;
@@ -471,7 +517,7 @@
 </head>
 <body>
     <div id="main-background"></div>
-    <div id="animated-background"></div>
+    <div id="parallax-background"></div> <div id="animated-background"></div>
     <div id="background-overlay"></div>
 
     <button class="theme-toggle liquid-glass" id="themeToggle"></button>
@@ -489,10 +535,11 @@
         const title = document.getElementById('title');
         const themeToggle = document.getElementById('themeToggle');
         const mainBackground = document.getElementById('main-background');
+        const parallaxBackground = document.getElementById('parallax-background'); // Get parallax element
         const animatedBackground = document.getElementById('animated-background');
         const backgroundOverlay = document.getElementById('background-overlay');
         const commentContainer1 = document.querySelector('.commonninja_component.pid-88eb78c5-d649-40ea-bbd8-b0bf84bfa343');
-        const commentContainer2 = document.querySelector('.commonninja_component.pid-c848a80a-ea99-45e6-bfba-b0bf84bfa343');
+        const commentContainer2 = document.querySelector('.commonninja_component.pid-c848a80a-ea99-45e6-bfba-a0bde6356fc1');
 
         const themeStates = ['normal', 'light', 'dark'];
         const themeLabels = {
@@ -502,14 +549,27 @@
         };
         let currentThemeIndex = 2; // START AT DARK MODE
 
+        // ** IMPORTANT: Replace this with your actual YouTube channel URL **
+        const youtubeChannelLink = 'https://www.youtube.com/@TheActualYouTubeChannelURL'; 
+
+        // Parallax scroll speed (smaller value = slower parallax)
+        const parallaxSpeed = 0.2; 
+
         function applyBackground(theme) {
             if (theme === 'light') {
                 mainBackground.style.background = 'linear-gradient(135deg, #cce4f7, #dbeeef)';
+                parallaxBackground.style.opacity = '0.6';
+                parallaxBackground.style.filter = 'grayscale(30%) brightness(120%)';
             } else if (theme === 'dark') {
                 mainBackground.style.background = 'linear-gradient(135deg, #0a0a0a, #1e1e1e)';
-            } else {
+                parallaxBackground.style.opacity = '0.4';
+                parallaxBackground.style.filter = 'grayscale(70%) brightness(50%)';
+            } else { // Normal mode
                 mainBackground.style.background = 'transparent';
+                parallaxBackground.style.opacity = '0.7';
+                parallaxBackground.style.filter = 'grayscale(0%) brightness(100%)';
             }
+            
             if (theme === 'normal') {
                 animatedBackground.style.opacity = '0.8';
             } else {
@@ -583,27 +643,42 @@
             }
 
             document.querySelectorAll('button.liquid-glass, .btn.liquid-glass').forEach(btn => {
-                if (btn.id !== 'themeToggle') {
-                    if (newTheme === 'normal') {
-                        btn.classList.add('color-changing-button');
-                        let hue = Math.floor(Math.random() * 360);
-                        btn.style.setProperty('--hue', hue);
-                        if (!btn.hueInterval) {
-                            btn.hueInterval = setInterval(() => {
-                                hue = (hue + 1) % 360;
-                                btn.style.setProperty('--hue', hue);
-                            }, 50);
-                        }
-                    } else {
-                        btn.classList.remove('color-changing-button');
-                        btn.style.removeProperty('--hue');
-                        if (btn.hueInterval) {
-                            clearInterval(btn.hueInterval);
-                            btn.hueInterval = null;
-                        }
+                // Ensure theme toggle doesn't get color changing animation
+                if (btn.id === 'themeToggle') {
+                    btn.classList.remove('color-changing-button');
+                    btn.style.removeProperty('--hue');
+                    if (btn.hueInterval) {
+                        clearInterval(btn.hueInterval);
+                        btn.hueInterval = null;
+                    }
+                    return; // Skip other button logic for themeToggle
+                }
+
+                if (newTheme === 'normal') {
+                    btn.classList.add('color-changing-button');
+                    let hue = Math.floor(Math.random() * 360);
+                    btn.style.setProperty('--hue', hue);
+                    if (!btn.hueInterval) {
+                        btn.hueInterval = setInterval(() => {
+                            hue = (hue + 1) % 360;
+                            btn.style.setProperty('--hue', hue);
+                        }, 50);
+                    }
+                } else {
+                    btn.classList.remove('color-changing-button');
+                    btn.style.removeProperty('--hue');
+                    if (btn.hueInterval) {
+                        clearInterval(btn.hueInterval);
+                        btn.hueInterval = null;
                     }
                 }
             });
+        }
+
+        // Parallax effect on scroll
+        function handleParallax() {
+            const scrollY = window.pageYOffset;
+            parallaxBackground.style.transform = `translateY(${scrollY * parallaxSpeed}px)`;
         }
 
         const pdfLinks = {
@@ -629,6 +704,9 @@
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
                     <button id="mathsBtn" aria-label="Open Maths chapters" class="liquid-glass">Maths</button>
                     <a href="about.html" rel="noopener" class="btn liquid-glass" style="text-decoration: none; text-align: center;">About Me</a>
+                    <a href="${youtubeChannelLink}" target="_blank" rel="noopener" class="btn liquid-glass" id="youtubeBtn" aria-label="Open YouTube Channel">
+                        <span class="button-icon"></span> YouTube Channel
+                    </a>
                 </div>
             `;
             transitionContent(html, () => {
@@ -698,6 +776,11 @@
             document.body.style.color = '#f0f0f0';
             mainPage();
             themeToggle.textContent = themeLabels[themeStates[currentThemeIndex]];
+            
+            // Add scroll listener for parallax effect
+            window.addEventListener('scroll', handleParallax);
+            // Initial call to set correct parallax position
+            handleParallax();
         });
 
         themeToggle.addEventListener('click', () => {
