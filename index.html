@@ -2,20 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Std 10 - Liquid UI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Std 10 - Liquid UI Extreme v2</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* --- Base Styles & Reset --- */
+        :root {
+            --title-shadow: none; /* CSS variable for dynamic title shadow */
+            --ripple-color-light: rgba(255, 255, 255, 0.7);
+            --ripple-color-dark: rgba(0, 0, 0, 0.7);
+            --pointer-glow-color: transparent;
+            --button-text-shadow: none;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            user-select: none; /* Disable text selection for a more app-like feel */
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         html, body {
-            min-height: 100vh; /* Allow scrolling by using min-height */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -23,44 +35,46 @@
             position: relative;
             font-family: 'Segoe UI', sans-serif;
             color: #333;
-            overflow-x: hidden; /* Prevent horizontal scroll due to parallax */
+            overflow: hidden; /* Crucial for preventing scrollbars with multiple fixed layers */
+            transition: color 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* --- Primary Background Layer --- */
+        /* --- Background Layers --- */
+        .background-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform, opacity, filter;
+        }
+
         #main-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -4; /* Lower z-index than parallax */
-            transition: background 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background: linear-gradient(135deg, #0a0a0a, #1e1e1e); /* Start dark */
+            z-index: -10;
         }
 
-        /* --- Parallax Background Layer --- */
-        #parallax-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('https://source.unsplash.com/random/1920x1080/?abstract,geometric'); /* Replace with your actual parallax image */
+        #parallax-layer-1 { /* Deeper, slower parallax */
+            background-image: url('https://source.unsplash.com/random/1920x1080/?geometric,abstract,pattern');
             background-size: cover;
             background-position: center;
-            background-repeat: no-repeat;
-            z-index: -3; /* Between main and animated */
-            will-change: transform; /* Optimize for smooth animation */
-            transition: opacity 0.5s ease, filter 0.5s ease;
-            opacity: 0.7; /* Default opacity for normal mode */
+            z-index: -9;
+            opacity: 0.4;
+            filter: grayscale(70%) brightness(50%);
         }
 
-        /* --- Animated Background (Normal Mode) --- */
+        #parallax-layer-2 { /* Mid-layer, slightly faster parallax */
+            background-image: url('https://source.unsplash.com/random/1920x1080/?futuristic,tech,lines');
+            background-size: cover;
+            background-position: center;
+            z-index: -8;
+            opacity: 0.3;
+            filter: hue-rotate(270deg) saturate(120%) brightness(80%);
+        }
+
         #animated-background {
-            position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
             background: linear-gradient(
                 45deg,
                 #ff007f,
@@ -72,54 +86,145 @@
             animation:
                 colorShiftBackground 15s linear infinite alternate,
                 moveBackground 20s linear infinite;
-            z-index: -2; /* Above parallax */
-            opacity: 0.8;
-            transition: opacity 0.5s ease;
+            z-index: -7;
+            opacity: 0; /* Starts off for dark mode */
         }
 
-        /* --- Background Overlay --- */
-        #background-overlay {
+        #gradient-blob {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            background: radial-gradient(
+                circle at var(--blob-x, 50%) var(--blob-y, 50%),
+                rgba(255, 0, 127, 0.3) 0%, /* Pink */
+                rgba(0, 255, 255, 0.3) 30%, /* Cyan */
+                rgba(127, 0, 255, 0.3) 60%, /* Purple */
+                transparent 100%
+            );
+            filter: blur(100px); /* Creates a soft, glowing blob */
+            opacity: 0.4;
+            animation: blobShift 20s ease-in-out infinite alternate;
+            z-index: -6;
+            mix-blend-mode: screen; /* For cool light effects */
+            transition: opacity 0.7s ease, background 0.7s ease;
+            will-change: filter, opacity, background;
+        }
+
+        #particle-canvas {
+            z-index: -5;
+            opacity: 0.8;
+            transition: opacity 0.7s ease;
+        }
+
+        #dot-canvas {
+            z-index: -4;
+            opacity: 0.5;
+        }
+
+        #background-overlay { /* Used for smooth transitions between themes */
+            z-index: -2;
             background-color: transparent;
             transform: translateX(100%);
             transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* --- Theme Specific Body Classes --- */
-        body.light-mode #main-background {
-            background: linear-gradient(135deg, #cce4f7, #dbeeef);
+        #vignette-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.8), inset 0 0 150px rgba(0, 0, 0, 0.6);
+            z-index: 99; /* Above all background layers, below content */
+            pointer-events: none;
+            transition: box-shadow 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        body.dark-mode #main-background {
-            background: linear-gradient(135deg, #0a0a0a, #1e1e1e);
-        }
-        body.normal-mode #animated-background {
-            opacity: 0.8;
-        }
-        body.light-mode #animated-background,
-        body.dark-mode #animated-background {
+
+        #pointer-glow {
+            position: fixed;
+            width: 150px;
+            height: 150px;
+            background: var(--pointer-glow-color);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            filter: blur(50px);
             opacity: 0;
+            transition: opacity 0.3s ease-out, background 0.7s ease;
+            pointer-events: none;
+            z-index: 98; /* Above backgrounds, below content */
+            will-change: transform, opacity;
         }
+
+        /* --- Theme Specific Body Classes --- */
+        body.light-mode #main-background { background: linear-gradient(135deg, #e0f2f7, #f0faff); }
+        body.dark-mode #main-background { background: linear-gradient(135deg, #0a0a0a, #1e1e1e); }
+        body.normal-mode #animated-background { opacity: 0.8; }
+        body.light-mode #animated-background, body.dark-mode #animated-background { opacity: 0; }
         body.light-mode { color: #333; }
         body.dark-mode { color: #f0f0f0; }
 
-        /* Parallax background specific styling for modes */
-        body.normal-mode #parallax-background {
-            opacity: 0.7;
-            filter: grayscale(0%) brightness(100%); /* Original for normal */
-        }
-        body.light-mode #parallax-background {
+        /* Parallax layer specific styling for modes */
+        body.normal-mode #parallax-layer-1 { opacity: 0.7; filter: grayscale(0%) brightness(100%); }
+        body.light-mode #parallax-layer-1 { opacity: 0.6; filter: grayscale(30%) brightness(120%); }
+        body.dark-mode #parallax-layer-1 { opacity: 0.4; filter: grayscale(70%) brightness(50%); }
+
+        body.normal-mode #parallax-layer-2 { opacity: 0.8; filter: hue-rotate(0deg) saturate(100%) brightness(100%); }
+        body.light-mode #parallax-layer-2 { opacity: 0.5; filter: hue-rotate(180deg) saturate(80%) brightness(150%); }
+        body.dark-mode #parallax-layer-2 { opacity: 0.3; filter: hue-rotate(270deg) saturate(120%) brightness(80%); }
+
+        /* Dot Canvas opacity per theme */
+        body.normal-mode #dot-canvas { opacity: 1; }
+        body.light-mode #dot-canvas { opacity: 0.7; }
+        body.dark-mode #dot-canvas { opacity: 0.5; }
+
+        /* Particle Canvas opacity per theme */
+        body.normal-mode #particle-canvas { opacity: 0.9; }
+        body.light-mode #particle-canvas { opacity: 0.6; }
+        body.dark-mode #particle-canvas { opacity: 0.8; }
+
+        /* Gradient Blob per theme */
+        body.normal-mode #gradient-blob {
             opacity: 0.6;
-            filter: grayscale(30%) brightness(120%); /* Lighter for light mode */
+            background: radial-gradient(
+                circle at var(--blob-x, 50%) var(--blob-y, 50%),
+                rgba(255, 0, 127, 0.4) 0%, /* Pink */
+                rgba(0, 255, 255, 0.4) 30%, /* Cyan */
+                rgba(127, 0, 255, 0.4) 60%, /* Purple */
+                transparent 100%
+            );
         }
-        body.dark-mode #parallax-background {
+        body.light-mode #gradient-blob {
+            opacity: 0.3;
+            background: radial-gradient(
+                circle at var(--blob-x, 50%) var(--blob-y, 50%),
+                rgba(0, 150, 255, 0.2) 0%, /* Light blue */
+                rgba(255, 200, 0, 0.2) 50%, /* Yellow */
+                transparent 100%
+            );
+        }
+        body.dark-mode #gradient-blob {
             opacity: 0.4;
-            filter: grayscale(70%) brightness(50%); /* Darker for dark mode */
+            background: radial-gradient(
+                circle at var(--blob-x, 50%) var(--blob-y, 50%),
+                rgba(255, 165, 0, 0.3) 0%, /* Orange */
+                rgba(150, 0, 255, 0.3) 50%, /* Dark Purple */
+                transparent 100%
+            );
         }
+
+
+        /* Vignette effect per theme */
+        body.normal-mode #vignette-overlay { box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.7), inset 0 0 150px rgba(0, 0, 0, 0.5); }
+        body.light-mode #vignette-overlay { box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.1), inset 0 0 120px rgba(0, 0, 0, 0.05); }
+        body.dark-mode #vignette-overlay { box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9), inset 0 0 150px rgba(0, 0, 0, 0.7); }
+
+        /* Pointer Glow colors */
+        body.normal-mode #pointer-glow { --pointer-glow-color: radial-gradient(circle, rgba(255, 0, 127, 0.4), rgba(0, 255, 255, 0.4), transparent 70%); }
+        body.light-mode #pointer-glow { --pointer-glow-color: radial-gradient(circle, rgba(0, 150, 255, 0.3), rgba(255, 200, 0, 0.3), transparent 70%); }
+        body.dark-mode #pointer-glow { --pointer-glow-color: radial-gradient(circle, rgba(255, 165, 0, 0.3), rgba(150, 0, 255, 0.3), transparent 70%); }
+
 
         /* Keyframe Animations */
         @keyframes colorShiftBackground {
@@ -130,6 +235,23 @@
             0% { background-position: 0% 0%; }
             100% { background-position: 100% 100%; }
         }
+        @keyframes contentFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes titleFloat {
+            0% { transform: translateY(0px) rotate(0.5deg); }
+            50% { transform: translateY(-5px) rotate(-0.5deg); }
+            100% { transform: translateY(0px) rotate(0.5deg); }
+        }
+        @keyframes blobShift {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(5%, -10%); }
+            50% { transform: translate(-10%, 15%); }
+            75% { transform: translate(15%, -5%); }
+            100% { transform: translate(0, 0); }
+        }
+
 
         /* --- Liquid Glass Styles --- */
         .liquid-glass {
@@ -143,7 +265,7 @@
                         border 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
                         box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
                         color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                        transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                        transform 0.2s ease-out; /* Faster transform for hover */
             position: relative;
             overflow: hidden;
             will-change: transform, box-shadow, background, backdrop-filter;
@@ -214,9 +336,23 @@
             font-size: 3rem;
             user-select: none;
             margin-bottom: 2rem;
-            z-index: 1;
+            z-index: 100; /* Higher z-index for content */
             color: inherit;
+            text-shadow: var(--title-shadow); /* Dynamic shadow */
+            transition: text-shadow 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            animation: titleFloat 8s ease-in-out infinite; /* Continuous subtle float */
+            will-change: transform, text-shadow;
         }
+        body.normal-mode .title-container {
+            --title-shadow: 0 0 15px rgba(255, 0, 200, 0.8), 0 0 30px rgba(0, 200, 255, 0.6);
+        }
+        body.light-mode .title-container {
+            --title-shadow: 0 0 10px rgba(74, 123, 189, 0.5);
+        }
+        body.dark-mode .title-container {
+            --title-shadow: 0 0 15px rgba(255, 165, 0, 0.6), 0 0 30px rgba(255, 140, 0, 0.4);
+        }
+
 
         #content {
             max-width: 700px;
@@ -228,10 +364,10 @@
             flex-direction: column;
             justify-content: center;
             opacity: 1;
-            will-change: opacity;
+            will-change: opacity, transform;
             color: inherit;
-            z-index: 1;
-            transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 100; /* Higher z-index for content */
+            animation: contentFadeIn 0.5s ease-out; /* Apply fade-in animation on content load */
         }
 
         button, .btn {
@@ -248,42 +384,83 @@
             text-transform: uppercase;
             letter-spacing: 1.2px;
             transform-origin: center center;
-            z-index: 1;
+            z-index: 101; /* Above other content */
             color: inherit;
-            display: flex; /* Added for icon/text alignment */
-            align-items: center; /* Added for icon/text alignment */
-            justify-content: center; /* Added for icon/text alignment */
-            gap: 8px; /* Space between icon and text */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative; /* For ripple effect */
+            overflow: hidden; /* For ripple effect */
         }
 
+        /* Button Text Shadow on Hover */
+        button span, .btn span {
+            transition: text-shadow 0.2s ease-out;
+        }
+        button:hover span, .btn:hover span {
+            text-shadow: var(--button-text-shadow);
+        }
+        body.normal-mode button:hover span, body.normal-mode .btn:hover span {
+            --button-text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+        }
+        body.light-mode button:hover span, body.light-mode .btn:hover span {
+            --button-text-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+        }
+        body.dark-mode button:hover span, body.dark-mode .btn:hover span {
+            --button-text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+        }
+
+
         .button-icon {
-            /* Placeholder for YouTube icon */
-            width: 24px; /* Adjust as needed */
-            height: 24px; /* Adjust as needed */
-            background-color: currentColor; /* Will pick up button text color */
+            width: 24px;
+            height: 24px;
+            background-color: currentColor;
             mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.543 6.495c-.234-.848-.966-1.58-1.814-1.814C18.49 4.32 12 4.32 12 4.32s-6.49 0-7.729.361c-.848.234-1.58.966-1.814 1.814C2.32 7.51 2.32 12 2.32 12s0 4.49.361 5.729c.234.848.966 1.58 1.814 1.814C5.51 19.68 12 19.68 12 19.68s6.49 0 7.729-.361c.848-.234 1.58-.966 1.814-1.814C21.68 16.49 21.68 12 21.68 12s0-4.49-.361-5.729zM9.99 15.606V8.394L15.667 12l-5.677 3.606z"/></svg>') no-repeat center / contain;
             -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.543 6.495c-.234-.848-.966-1.58-1.814-1.814C18.49 4.32 12 4.32 12 4.32s-6.49 0-7.729.361c-.848.234-1.58.966-1.814 1.814C2.32 7.51 2.32 12 2.32 12s0 4.49.361 5.729c.234.848.966 1.58 1.814 1.814C5.51 19.68 12 19.68 12 19.68s6.49 0 7.729-.361c.848-.234 1.58-.966 1.814-1.814C21.68 16.49 21.68 12 21.68 12s0-4.49-.361-5.729zM9.99 15.606V8.394L15.667 12l-5.677 3.606z"/></svg>') no-repeat center / contain;
             transition: background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Ripple Effect for Buttons */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            background-color: var(--ripple-color-light); /* Default light ripple */
+        }
+        body.dark-mode .ripple {
+            background-color: var(--ripple-color-dark); /* Dark ripple */
+        }
+        body.normal-mode .ripple {
+            background-color: hsl(var(--button-hue-at-click, 0), 90%, 80%, 0.7); /* Hue-aware ripple */
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
         }
 
         .chapter-list, .option-list {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 1.2rem; /* Adjusted gap for better spacing */
-            margin-bottom: 1.5rem; /* Space before back button */
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
         }
 
         .chapter-btn, .option-btn {
-            flex: 1 0 28%; /* Keeps 3 items per row on larger screens */
-            margin: 0; /* Remove individual margin as gap handles it */
+            flex: 1 0 28%;
+            margin: 0;
             padding: 1rem 0;
             font-size: 1.1rem;
             box-shadow: none;
-            display: flex; /* Enable flex for content within button */
-            align-items: center; /* Vertically center content */
-            justify-content: center; /* Horizontally center content */
-            position: relative; /* For indicator positioning */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
         }
 
         /* Chapter Availability Indicator */
@@ -292,30 +469,17 @@
             height: 12px;
             border-radius: 50%;
             position: absolute;
-            top: 8px; /* Position top-right */
+            top: 8px;
             right: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.3); /* Slight border for visibility */
+            border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
         }
 
         /* Indicator colors based on availability and theme */
-        .chapter-btn .indicator.available {
-            background-color: #4CAF50; /* Green for available */
-        }
-        .chapter-btn .indicator.unavailable {
-            background-color: #F44336; /* Red for unavailable */
-        }
-
-        /* Light/Dark mode indicator overrides */
-        body.light-mode .chapter-btn .indicator.available,
-        body.dark-mode .chapter-btn .indicator.available {
-            background-color: #66BB6A; /* Lighter green for other modes */
-        }
-
-        body.light-mode .chapter-btn .indicator.unavailable,
-        body.dark-mode .chapter-btn .indicator.unavailable {
-            background-color: #EF5350; /* Lighter red for other modes */
-        }
+        .chapter-btn .indicator.available { background-color: #4CAF50; }
+        .chapter-btn .indicator.unavailable { background-color: #F44336; }
+        body.light-mode .chapter-btn .indicator.available, body.dark-mode .chapter-btn .indicator.available { background-color: #66BB6A; }
+        body.light-mode .chapter-btn .indicator.unavailable, body.dark-mode .chapter-btn .indicator.unavailable { background-color: #EF5350; }
 
         #backBtn {
             margin-top: 1.5rem;
@@ -323,9 +487,7 @@
             color: #5a1a1a;
         }
 
-        body.dark-mode #backBtn {
-            color: #f0f0f0;
-        }
+        body.dark-mode #backBtn { color: #f0f0f0; }
 
         .theme-toggle {
             position: fixed;
@@ -339,17 +501,18 @@
             box-shadow: none;
         }
 
-        /* --- CommonNinja Comment Section Styling --- */
+        /* --- CommonNinja Comment Section Styling (Example for integration) --- */
+        /*
         .commonninja_component {
             margin-top: 1rem;
-            margin-bottom: 2rem; /* Ensure space at bottom for scrolling */
+            margin-bottom: 2rem;
             padding: 1rem;
             border-radius: 18px;
             transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
                                 color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             max-width: 700px;
             width: 100%;
-            z-index: 1;
+            z-index: 100;
         }
 
         body.normal-mode .commonninja_component {
@@ -357,293 +520,462 @@
             color: #333;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
         body.light-mode .commonninja_component {
             background: rgba(255, 255, 255, 0.4);
             color: #1a2935;
             border: 1px solid rgba(255, 255, 255, 0.6);
         }
-
         body.dark-mode .commonninja_component {
             background: rgba(30, 30, 30, 0.4);
             color: #f0f0f0;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        */
 
-        /* --- Normal Mode Hover/Focus --- */
+        /* --- Hover/Focus Effects for Buttons --- */
+        button:hover, .btn:hover,
+        .chapter-btn:hover, .option-btn:hover {
+            transform: translateY(-5px) scale(1.03); /* More pronounced lift */
+            box-shadow:
+                0 12px 24px rgba(0, 0, 0, 0.3); /* Stronger general shadow */
+        }
+        button:focus, .btn:focus {
+            outline: none;
+            transform: translateY(-2px) scale(1.01); /* Slight pop on focus */
+        }
+
         body.normal-mode button:hover, body.normal-mode .btn:hover,
         body.normal-mode .chapter-btn:hover, body.normal-mode .option-btn:hover {
-            transform: translateY(-4px) scale(1.02);
             box-shadow:
-                0 8px 16px rgba(0, 0, 0, 0.2),
-                0 0 50px rgba(255, 0, 127, 0.5), /* Pink glow */
-                0 0 80px rgba(0, 255, 255, 0.3); /* Cyan glow */
-        }
-        body.normal-mode #backBtn:hover {
-            box-shadow:
-                0 8px 16px rgba(0, 0, 0, 0.2),
-                0 0 50px rgba(255, 0, 127, 0.5),
-                0 0 80px rgba(0, 255, 255, 0.3);
+                0 12px 24px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(255, 0, 127, 0.6), /* Pink glow */
+                0 0 100px rgba(0, 255, 255, 0.4); /* Cyan glow */
         }
         body.normal-mode button:focus, body.normal-mode .btn:focus {
-            outline: none;
             box-shadow:
-                0 0 0 3px rgba(255, 0, 127, 0.6),
-                0 0 12px 4px rgba(0, 255, 255, 0.4);
+                0 0 0 4px rgba(255, 0, 127, 0.7),
+                0 0 15px 5px rgba(0, 255, 255, 0.5);
         }
         body.normal-mode .color-changing-button:hover {
-            transform: translateY(-4px) scale(1.02);
             box-shadow:
-                0 8px 16px rgba(0, 0, 0, 0.2),
-                0 0 50px hsl(var(--hue, 0), 100%, 70%, 0.5),
-                0 0 80px hsl(var(--hue, 0), 100%, 60%, 0.3);
+                0 12px 24px rgba(0, 0, 0, 0.3),
+                0 0 60px hsl(var(--hue, 0), 100%, 70%, 0.6),
+                0 0 100px hsl(calc(var(--hue, 0) + 90), 100%, 60%, 0.4);
         }
         body.normal-mode .color-changing-button:focus {
-            outline: none;
             box-shadow:
-                0 0 0 3px hsl(var(--hue, 0), 100%, 70%, 0.6),
-                0 0 12px 4px hsl(var(--hue, 0), 100%, 70%, 0.4);
+                0 0 0 4px hsl(var(--hue, 0), 100%, 70%, 0.7),
+                0 0 15px 5px hsl(calc(var(--hue, 0) + 90), 100%, 60%, 0.5);
         }
 
         /* --- Light Mode Overrides --- */
         body.light-mode .liquid-glass {
             background: rgba(255, 255, 255, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.6);
-            border-right-color: rgba(255, 255, 255, 0.3);
-            border-bottom-color: rgba(255, 255, 255, 0.3);
-            box-shadow:
-                0 4px 12px rgba(0, 0, 0, 0.1),
-                0 0 30px rgba(100, 150, 200, 0.1),
-                0 0 50px rgba(150, 200, 250, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             color: #1a2935;
         }
         body.light-mode .liquid-glass::before {
             background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.2) 0%,
-                rgba(255, 255, 255, 0) 50%,
-                rgba(255, 255, 255, 0.1) 100%
+                135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.1) 100%
             );
         }
         body.light-mode button:hover, body.light-mode .btn:hover,
         body.light-mode .chapter-btn:hover, body.light-mode .option-btn:hover {
-            transform: translateY(-4px) scale(1.02);
             box-shadow:
-                0 8px 16px rgba(0, 0, 0, 0.2),
-                0 0 50px rgba(74, 123, 189, 0.5), /* Blue glow */
-                0 0 80px rgba(74, 123, 189, 0.3);
-        }
-        body.light-mode #backBtn:hover {
-            box-shadow:
-                0 8px 16px rgba(0, 0, 0, 0.2),
-                0 0 50px rgba(74, 123, 189, 0.5),
-                0 0 80px rgba(74, 123, 189, 0.3);
+                0 12px 24px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(74, 123, 189, 0.6),
+                0 0 100px rgba(74, 123, 189, 0.4);
         }
         body.light-mode button:focus, body.light-mode .btn:focus {
-            outline: none;
             box-shadow:
-                0 0 0 3px rgba(74, 123, 189, 0.6),
-                0 0 12px 4px rgba(74, 123, 189, 0.4);
+                0 0 0 4px rgba(74, 123, 189, 0.7),
+                0 0 15px 5px rgba(74, 123, 189, 0.5);
         }
 
         /* --- Dark Mode Overrides --- */
         body.dark-mode .liquid-glass {
             background: rgba(30, 30, 30, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-right-color: rgba(255, 255, 255, 0.05);
-            border-bottom-color: rgba(255, 255, 255, 0.05);
-            box-shadow:
-                0 4px 12px rgba(0, 0, 0, 0.3),
-                0 0 40px rgba(0, 150, 150, 0.1),
-                0 0 60px rgba(150, 0, 150, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             color: #f0f0f0;
         }
         body.dark-mode .liquid-glass::before {
             background: linear-gradient(
-                135deg,
-                rgba(50, 50, 50, 0.1) 0%,
-                rgba(50, 50, 50, 0) 50%,
-                rgba(50, 50, 50, 0.05) 100%
+                135deg, rgba(50, 50, 50, 0.1) 0%, rgba(50, 50, 50, 0) 50%, rgba(50, 50, 50, 0.05) 100%
             );
         }
         body.dark-mode button:hover, body.dark-mode .btn:hover,
         body.dark-mode .chapter-btn:hover, body.dark-mode .option-btn:hover {
-            transform: translateY(-4px) scale(1.02);
             box-shadow:
-                0 8px 16px rgba(0, 0, 0, 0.4),
-                0 0 50px rgba(255, 165, 0, 0.5), /* Orange glow */
-                0 0 80px rgba(255, 140, 0, 0.3);
-        }
-        body.dark-mode #backBtn:hover {
-            box-shadow:
-                0 8px 16px rgba(0, 0, 0, 0.4),
-                0 0 50px rgba(255, 165, 0, 0.5),
-                0 0 80px rgba(255, 140, 0, 0.3);
+                0 12px 24px rgba(0, 0, 0, 0.4),
+                0 0 60px rgba(255, 165, 0, 0.6),
+                0 0 100px rgba(255, 140, 0, 0.4);
         }
         body.dark-mode button:focus, body.dark-mode .btn:focus {
-            outline: none;
             box-shadow:
-                0 0 0 3px rgba(255, 165, 0, 0.6),
-                0 0 12px 4px rgba(255, 165, 0, 0.4);
+                0 0 0 4px rgba(255, 165, 0, 0.7),
+                0 0 15px 5px rgba(255, 165, 0, 0.5);
         }
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
-            h1, .title-container { font-size: 2.2rem; }
+            h1, .title-container { font-size: 2.2rem; margin-bottom: 1.5rem; }
             .chapter-btn, .option-btn { flex: 1 0 45%; padding: 0.8rem 0; font-size: 1rem; }
             #content { padding: 1.5rem; min-height: auto; }
             button, .btn { min-width: 120px; font-size: 1rem; padding: 0.8rem 1.5rem; }
             .commonninja_component { padding: 0.8rem; }
-            .chapter-list, .option-list { gap: 1rem; } /* Slightly smaller gap on tablets */
-            .chapter-btn .indicator {
-                width: 10px; /* Smaller indicator on smaller screens */
-                height: 10px;
-                top: 6px;
-                right: 6px;
-            }
+            .chapter-list, .option-list { gap: 1rem; }
+            .chapter-btn .indicator { width: 10px; height: 10px; top: 6px; right: 6px; }
+            #vignette-overlay { box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.8), inset 0 0 100px rgba(0, 0, 0, 0.6); }
+            #pointer-glow { width: 100px; height: 100px; filter: blur(30px); }
         }
-        @media (max-width: 480px) { /* More aggressive for small phones */
-            h1, .title-container { font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 1.5rem;}
+        @media (max-width: 480px) {
+            h1, .title-container { font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 1rem; }
             .chapter-btn, .option-btn { flex: 1 0 90%; padding: 0.7rem 0; font-size: 0.95rem; }
             button, .btn { min-width: 100px; font-size: 0.9rem; padding: 0.7rem 1rem; }
             .commonninja_component { padding: 0.6rem; }
-            .chapter-list, .option-list { gap: 0.8rem; } /* Even smaller gap on phones */
-            .theme-toggle {
-                padding: 0.6rem 1rem;
-                font-size: 0.9rem;
-            }
+            .chapter-list, .option-list { gap: 0.8rem; }
+            .theme-toggle { padding: 0.6rem 1rem; font-size: 0.9rem; }
+            #vignette-overlay { box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8), inset 0 0 80px rgba(0, 0, 0, 0.6); }
+            #pointer-glow { width: 80px; height: 80px; filter: blur(25px); }
         }
     </style>
 </head>
 <body>
-    <div id="main-background"></div>
-    <div id="parallax-background"></div> <div id="animated-background"></div>
+    <div id="main-background" class="background-layer"></div>
+    <div id="parallax-layer-1" class="background-layer"></div>
+    <div id="parallax-layer-2" class="background-layer"></div>
+    <div id="gradient-blob" class="background-layer"></div>
+    <canvas id="particle-canvas" class="background-layer"></canvas>
+    <canvas id="dot-canvas" class="background-layer"></canvas>
+    <div id="animated-background" class="background-layer"></div>
     <div id="background-overlay"></div>
+    <div id="vignette-overlay"></div>
+    <div id="pointer-glow"></div>
 
     <button class="theme-toggle liquid-glass" id="themeToggle"></button>
 
     <div class="title-container liquid-glass" id="title">Std 10</div>
         
     <div id="content" class="liquid-glass" role="main" tabindex="-1"></div>
-    <script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
-<div class="commonninja_component pid-88eb78c5-d649-40ea-bbd8-b0bf84bfa343"></div>
-<script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
-<div class="commonninja_component pid-c848a80a-ea99-45e6-bfba-a0bde6356fc1"></div>
-
+    
     <script>
         const content = document.getElementById('content');
         const title = document.getElementById('title');
         const themeToggle = document.getElementById('themeToggle');
         const mainBackground = document.getElementById('main-background');
-        const parallaxBackground = document.getElementById('parallax-background'); // Get parallax element
+        const parallaxLayer1 = document.getElementById('parallax-layer-1');
+        const parallaxLayer2 = document.getElementById('parallax-layer-2');
+        const dotCanvas = document.getElementById('dot-canvas');
+        const dotCtx = dotCanvas.getContext('2d');
+        const particleCanvas = document.getElementById('particle-canvas');
+        const particleCtx = particleCanvas.getContext('2d');
         const animatedBackground = document.getElementById('animated-background');
         const backgroundOverlay = document.getElementById('background-overlay');
-        const commentContainer1 = document.querySelector('.commonninja_component.pid-88eb78c5-d649-40ea-bbd8-b0bf84bfa343');
-        const commentContainer2 = document.querySelector('.commonninja_component.pid-c848a80a-ea99-45e6-bfba-a0bde6356fc1');
+        const vignetteOverlay = document.getElementById('vignette-overlay');
+        const gradientBlob = document.getElementById('gradient-blob');
+        const pointerGlow = document.getElementById('pointer-glow');
 
-        const themeStates = ['normal', 'light', 'dark'];
+        // Optional Audio Elements
+        // const clickSound = document.getElementById('clickSound');
+        // const themeChangeSound = document.getElementById('themeChangeSound');
+
+        const themeStates = ['dark', 'normal', 'light']; // Order changed: Dark -> Normal -> Light
         const themeLabels = {
+            'dark': '✨ Switch to Normal',
             'normal': '☀️ Switch to Light',
-            'light': '🌙 Switch to Dark',
-            'dark': '✨ Switch to Normal'
+            'light': '🌙 Switch to Dark'
         };
-        let currentThemeIndex = 2; // START AT DARK MODE
+        let currentThemeIndex = 0; // Start at 'dark' mode
 
-        // ** IMPORTANT: Replace this with your actual YouTube channel URL **
         const youtubeChannelLink = 'https://www.youtube.com/@TheActualYouTubeChannelURL'; 
 
-        // Parallax scroll speed (smaller value = slower parallax)
-        const parallaxSpeed = 0.2; 
+        // Parallax scroll speeds (smaller value = slower parallax)
+        const scrollParallaxSpeed1 = 0.08; // Deeper layer
+        const scrollParallaxSpeed2 = 0.18; // Mid layer
+        
+        // Dot animation settings
+        const minNumDots = 80;
+        const maxNumDots = 200;
+        let numDots = 0;
+        const dotRadius = 1.5;
+        const dotSpeed = 0.005;
+        const connectionDistance = 150; // Increased connection distance
+        const repulsionStrength = 30; // Stronger repulsion
+        const attractionStrength = 0.0008; // Slower return to initial pos
+        const dotTrailLength = 0.05; // Opacity decrease per frame for trail (0-1)
 
-        function applyBackground(theme) {
-            if (theme === 'light') {
-                mainBackground.style.background = 'linear-gradient(135deg, #cce4f7, #dbeeef)';
-                parallaxBackground.style.opacity = '0.6';
-                parallaxBackground.style.filter = 'grayscale(30%) brightness(120%)';
-            } else if (theme === 'dark') {
-                mainBackground.style.background = 'linear-gradient(135deg, #0a0a0a, #1e1e1e)';
-                parallaxBackground.style.opacity = '0.4';
-                parallaxBackground.style.filter = 'grayscale(70%) brightness(50%)';
-            } else { // Normal mode
-                mainBackground.style.background = 'transparent';
-                parallaxBackground.style.opacity = '0.7';
-                parallaxBackground.style.filter = 'grayscale(0%) brightness(100%)';
+        let dots = [];
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let targetX = mouseX;
+        let targetY = mouseY;
+        let currentHue = 0; // For Normal mode button hue
+
+        // Particle animation settings
+        const numParticles = 100;
+        const particleRadius = 1;
+        const particleSpeed = 0.8;
+        let particles = [];
+
+        const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+        let deviceOrientationGranted = false;
+        
+        // Ripple effect handler
+        function createRipple(event) {
+            const button = event.currentTarget;
+            const circle = document.createElement('span');
+            const diameter = Math.max(button.clientWidth, button.clientHeight);
+            const radius = diameter / 2;
+
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
+            circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
+            circle.classList.add('ripple');
+
+            // Set ripple color dynamically for normal mode
+            if (document.body.classList.contains('normal-mode')) {
+                // Get the current hue of the button
+                const computedHue = parseFloat(getComputedStyle(button).getPropertyValue('--hue').trim()) || 0;
+                button.style.setProperty('--button-hue-at-click', computedHue);
             }
+
+            const ripple = button.getElementsByClassName('ripple')[0];
+
+            if (ripple) {
+                ripple.remove();
+            }
+            button.appendChild(circle);
+            // if (clickSound) clickSound.play().catch(e => console.log("Click sound play failed:", e));
+        }
+
+        // Dot Class
+        class Dot {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.initialX = x;
+                this.initialY = y;
+                this.vx = (Math.random() - 0.5) * dotSpeed * 20; // Increased initial velocity
+                this.vy = (Math.random() - 0.5) * dotSpeed * 20;
+                this.radius = dotRadius + Math.random() * 0.5;
+                this.opacity = 1;
+            }
+
+            update() {
+                const dxInitial = this.initialX - this.x;
+                const dyInitial = this.initialY - this.y;
+                this.vx += dxInitial * attractionStrength;
+                this.vy += dyInitial * attractionStrength;
+
+                const dxTarget = targetX - this.x;
+                const dyTarget = targetY - this.y;
+                const distTarget = Math.sqrt(dxTarget * dxTarget + dyTarget * dyTarget);
+
+                if (distTarget < connectionDistance * 2.5) { // Increased interaction range
+                    const force = repulsionStrength / (distTarget * distTarget + 0.01); // Add small value to prevent div by zero
+                    this.vx -= dxTarget * force;
+                    this.vy -= dyTarget * force;
+                }
+
+                this.vx *= 0.96; // Slightly more damping
+                this.vy *= 0.96;
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Keep dots within slightly expanded bounds
+                const padding = 50; // Increased padding
+                if (this.x < -padding || this.x > dotCanvas.width + padding) this.vx *= -1;
+                if (this.y < -padding || this.y > dotCanvas.height + padding) this.vy *= -1;
+
+                this.x = Math.max(-padding, Math.min(dotCanvas.width + padding, this.x));
+                this.y = Math.max(-padding, Math.min(dotCanvas.height + padding, this.y));
+            }
+
+            draw(dotColorBase) {
+                dotCtx.beginPath();
+                const speedMagnitude = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                const dynamicRadius = this.radius + speedMagnitude * 50;
+                
+                let dotColor = dotColorBase;
+                if (document.body.classList.contains('normal-mode')) {
+                    const hueOffset = speedMagnitude * 7000;
+                    dotColor = `hsla(${(hueOffset % 360)}, 100%, 70%, ${this.opacity})`;
+                } else {
+                    dotColor = dotColorBase.replace(')', `, ${this.opacity})`);
+                }
+
+                dotCtx.arc(this.x, this.y, dynamicRadius, 0, Math.PI * 2);
+                dotCtx.fillStyle = dotColor;
+                dotCtx.fill();
+            }
+        }
+
+        // Particle Class
+        class Particle {
+            constructor() {
+                this.x = Math.random() * particleCanvas.width;
+                this.y = Math.random() * particleCanvas.height;
+                this.vx = (Math.random() - 0.5) * particleSpeed;
+                this.vy = (Math.random() - 0.5) * particleSpeed;
+                this.radius = particleRadius + Math.random();
+                this.opacity = Math.random() * 0.8 + 0.2;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > particleCanvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > particleCanvas.height) this.vy *= -1;
+
+                this.x = Math.max(0, Math.min(particleCanvas.width, this.x));
+                this.y = Math.max(0, Math.min(particleCanvas.height, this.y));
+            }
+
+            draw(color) {
+                particleCtx.beginPath();
+                particleCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                particleCtx.fillStyle = color.replace(')', `, ${this.opacity})`);
+                particleCtx.fill();
+            }
+        }
+
+        function calculateNumDots() {
+            const area = window.innerWidth * window.innerHeight;
+            numDots = Math.min(maxNumDots, Math.max(minNumDots, Math.floor(area / 6000))); // Denser dots
+        }
+
+        function initDots() {
+            calculateNumDots();
+            dots = [];
+            for (let i = 0; i < numDots; i++) {
+                const x = Math.random() * dotCanvas.width;
+                const y = Math.random() * dotCanvas.height;
+                dots.push(new Dot(x, y));
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < numParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateDots() {
+            dotCanvas.width = window.innerWidth;
+            dotCanvas.height = window.innerHeight;
             
-            if (theme === 'normal') {
-                animatedBackground.style.opacity = '0.8';
-            } else {
-                animatedBackground.style.opacity = '0';
-            }
-        }
+            // Clear with a slight fade for trails
+            let trailColor = document.body.classList.contains('light-mode') ? `rgba(255, 255, 255, ${dotTrailLength})` : `rgba(0, 0, 0, ${dotTrailLength})`;
+            dotCtx.fillStyle = trailColor;
+            dotCtx.fillRect(0, 0, dotCanvas.width, dotCanvas.height);
+            
+            const currentTheme = themeStates[currentThemeIndex];
+            let dotColorBase = 'rgba(255, 255, 255, 0.4)'; // Default white for dark mode
+            let lineColor = 'rgba(255, 255, 255, 0.1)';
 
-        function animateBackgroundSlide(oldTheme, newTheme, callback) {
-            let overlayColor = '';
-            if (oldTheme === 'light') overlayColor = 'linear-gradient(135deg, #cce4f7, #dbeeef)';
-            else if (oldTheme === 'dark') overlayColor = 'linear-gradient(135deg, #0a0a0a, #1e1e1e)';
-            else overlayColor = 'transparent';
-
-            backgroundOverlay.style.background = overlayColor;
-            backgroundOverlay.style.transform = 'translateX(0)';
-            setTimeout(() => {
-                applyBackground(newTheme);
-                document.body.style.color = (newTheme === 'dark') ? '#f0f0f0' : '#333';
-                backgroundOverlay.style.transform = 'translateX(-100%)';
-                setTimeout(() => {
-                    backgroundOverlay.style.transition = 'none';
-                    backgroundOverlay.style.transform = 'translateX(100%)';
-                    backgroundOverlay.style.background = 'transparent';
-                    setTimeout(() => {
-                        backgroundOverlay.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                    }, 50);
-                    if (callback) callback();
-                }, 600);
-            }, 50);
-        }
-
-        function updateTheme(initialLoad = false) {
-            const oldTheme = themeStates[currentThemeIndex];
-            const newTheme = themeStates[currentThemeIndex];
-
-            document.body.classList.remove('normal-mode', 'light-mode', 'dark-mode');
-            document.body.classList.add(`${newTheme}-mode`);
-            themeToggle.textContent = themeLabels[newTheme];
-
-            if (initialLoad) {
-                applyBackground(newTheme);
-                document.body.style.color = (newTheme === 'dark') ? '#f0f0f0' : '#333';
-            } else {
-                animateBackgroundSlide(oldTheme, newTheme, () => {
-                    document.body.style.color = (newTheme === 'dark') ? '#f0f0f0' : '#333';
-                });
+            if (currentTheme === 'light') {
+                dotColorBase = 'rgba(50, 50, 50, 0.5)';
+                lineColor = 'rgba(50, 50, 50, 0.1)';
+            } else if (currentTheme === 'dark') {
+                dotColorBase = 'rgba(255, 255, 255, 0.3)';
+                lineColor = 'rgba(255, 255, 255, 0.05)';
+            } else if (currentTheme === 'normal') {
+                // Hue-based colors for normal mode dots
+                dotColorBase = `hsla(${currentHue}, 100%, 70%, 0.6)`;
+                lineColor = `hsla(${currentHue + 180}, 80%, 50%, 0.2)`;
             }
 
-            // Update Comment Section Theme
-            if (commentContainer1) {
-                commentContainer1.classList.remove('normal-mode', 'light-mode', 'dark-mode');
-                commentContainer1.classList.add(`${newTheme}-mode`);
-            }
-            if (commentContainer2) {
-                commentContainer2.classList.remove('normal-mode', 'light-mode', 'dark-mode');
-                commentContainer2.classList.add(`${newTheme}-mode`);
-            }
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].update();
+                dots[i].draw(dotColorBase);
 
-            // Attempt to dynamically update CommonNinja widget (placeholder)
-            if (window.CommonNinja) {
-                try {
-                    const themeConfig = {
-                        normal: { background: 'rgba(255, 255, 255, 0.15)', text: '#333' },
-                        light: { background: 'rgba(255, 255, 255, 0.4)', text: '#1a2935' },
-                        dark: { background: 'rgba(30, 30, 30, 0.4)', text: '#f0f0f0' }
-                    };
-                    console.log(`Updating CommonNinja widget to ${newTheme} mode:`, themeConfig[newTheme]);
-                } catch (e) {
-                    console.warn('CommonNinja theme update not supported:', e);
+                for (let j = i + 1; j < dots.length; j++) {
+                    const dx = dots[i].x - dots[j].x;
+                    const dy = dots[i].y - dots[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < connectionDistance) {
+                        dotCtx.beginPath();
+                        dotCtx.moveTo(dots[i].x, dots[i].y);
+                        dotCtx.lineTo(dots[j].x, dots[j].y);
+                        const alpha = Math.max(0, 0.6 - (distance / connectionDistance) * 0.6); 
+                        dotCtx.strokeStyle = lineColor.replace(')', `, ${alpha})`); 
+                        dotCtx.lineWidth = 1;
+                        dotCtx.stroke();
+                    }
                 }
             }
 
+            requestAnimationFrame(animateDots);
+        }
+
+        function animateParticles() {
+            particleCanvas.width = window.innerWidth;
+            particleCanvas.height = window.innerHeight;
+            particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+
+            let particleColor = 'rgba(255, 255, 255, 0.7)'; // Default for normal/dark
+            if (document.body.classList.contains('light-mode')) {
+                particleColor = 'rgba(50, 50, 50, 0.7)';
+            }
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw(particleColor);
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+
+        function applyBackground(theme) {
+            document.body.classList.remove('dark-mode', 'normal-mode', 'light-mode');
+            document.body.classList.add(`${theme}-mode`);
+            themeToggle.textContent = themeLabels[theme];
+            document.body.style.color = (theme === 'dark') ? '#f0f0f0' : '#333';
+
+            // Apply specific background transitions for each layer
+            if (theme === 'light') {
+                mainBackground.style.background = 'linear-gradient(135deg, #e0f2f7, #f0faff)';
+                parallaxLayer1.style.opacity = '0.6';
+                parallaxLayer1.style.filter = 'grayscale(30%) brightness(120%)';
+                parallaxLayer2.style.opacity = '0.5';
+                parallaxLayer2.style.filter = 'hue-rotate(180deg) saturate(80%) brightness(150%)';
+                dotCanvas.style.opacity = '0.7';
+                particleCanvas.style.opacity = '0.6';
+                gradientBlob.style.opacity = '0.3';
+                vignetteOverlay.style.boxShadow = 'inset 0 0 80px rgba(0, 0, 0, 0.1), inset 0 0 120px rgba(0, 0, 0, 0.05)';
+                animatedBackground.style.opacity = '0';
+            } else if (theme === 'dark') {
+                mainBackground.style.background = 'linear-gradient(135deg, #0a0a0a, #1e1e1e)';
+                parallaxLayer1.style.opacity = '0.4';
+                parallaxLayer1.style.filter = 'grayscale(70%) brightness(50%)';
+                parallaxLayer2.style.opacity = '0.3';
+                parallaxLayer2.style.filter = 'hue-rotate(270deg) saturate(120%) brightness(80%)';
+                dotCanvas.style.opacity = '0.5';
+                particleCanvas.style.opacity = '0.8';
+                gradientBlob.style.opacity = '0.4';
+                vignetteOverlay.style.boxShadow = 'inset 0 0 100px rgba(0, 0, 0, 0.9), inset 0 0 150px rgba(0, 0, 0, 0.7)';
+                animatedBackground.style.opacity = '0';
+            } else { // Normal mode
+                mainBackground.style.background = 'transparent';
+                parallaxLayer1.style.opacity = '0.7';
+                parallaxLayer1.style.filter = 'grayscale(0%) brightness(100%)';
+                parallaxLayer2.style.opacity = '0.8';
+                parallaxLayer2.style.filter = 'hue-rotate(0deg) saturate(100%) brightness(100%)';
+                dotCanvas.style.opacity = '1';
+                particleCanvas.style.opacity = '0.9';
+                gradientBlob.style.opacity = '0.6';
+                vignetteOverlay.style.boxShadow = 'inset 0 0 100px rgba(0, 0, 0, 0.7), inset 0 0 150px rgba(0, 0, 0, 0.5)';
+                animatedBackground.style.opacity = '0.8';
+            }
+
+            // Update button styles after class is applied
             document.querySelectorAll('button.liquid-glass, .btn.liquid-glass').forEach(btn => {
-                // Ensure theme toggle doesn't get color changing animation
                 if (btn.id === 'themeToggle') {
                     btn.classList.remove('color-changing-button');
                     btn.style.removeProperty('--hue');
@@ -651,10 +983,131 @@
                         clearInterval(btn.hueInterval);
                         btn.hueInterval = null;
                     }
-                    return; // Skip other button logic for themeToggle
+                    return;
                 }
 
-                if (newTheme === 'normal') {
+                if (theme === 'normal') {
+                    btn.classList.add('color-changing-button');
+                    let hue = Math.floor(Math.random() * 360);
+                    btn.style.setProperty('--hue', hue);
+                    if (!btn.hueInterval) {
+                        btn.hueInterval = setInterval(() => {
+                            hue = (hue + 1) % 360;
+                            btn.style.setProperty('--hue', hue);
+                        }, 50);
+                    }
+                } else {
+                    btn.classList.remove('color-changing-button');
+                    btn.style.removeProperty('--hue');
+                    if (btn.hueInterval) {
+                        clearInterval(btn.hueInterval);
+                        btn.hueInterval = null;
+                    }
+                }
+            });
+            // if (themeChangeSound) themeChangeSound.play().catch(e => console.log("Theme change sound play failed:", e));
+        }
+
+        function animateBackgroundSlide(oldTheme, newTheme) {
+            let overlayBackground = '';
+            if (oldTheme === 'light') overlayBackground = 'linear-gradient(135deg, #e0f2f7, #f0faff)';
+            else if (oldTheme === 'dark') overlayBackground = 'linear-gradient(135deg, #0a0a0a, #1e1e1e)';
+            else overlayBackground = 'linear-gradient(45deg, #ff007f, #00ffff, #ffea00, #7f00ff)'; // If coming FROM normal mode
+
+            backgroundOverlay.style.background = overlayBackground;
+            backgroundOverlay.style.transform = 'translateX(0)';
+            content.style.opacity = '0'; // Fade out content during transition
+
+            setTimeout(() => {
+                applyBackground(newTheme); // Apply the new theme CSS classes immediately
+                backgroundOverlay.style.transform = 'translateX(-100%)'; // Slide out
+                
+                setTimeout(() => {
+                    backgroundOverlay.style.transition = 'none'; // Reset transition for instant reposition
+                    backgroundOverlay.style.transform = 'translateX(100%)'; // Move back to right for next slide
+                    backgroundOverlay.style.background = 'transparent'; // Reset background
+                    setTimeout(() => {
+                        backgroundOverlay.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'; // Re-enable transition
+                        content.style.opacity = '1'; // Fade in content after transition
+                    }, 50);
+                }, 600); // Duration of the slide-out animation
+            }, 50); // Small delay to ensure render of overlay before sliding
+        }
+
+        // Static parallax effect on scroll
+        function handleScrollParallax() {
+            const scrollY = window.pageYOffset;
+            parallaxLayer1.style.transform = `translate3d(0, ${scrollY * scrollParallaxSpeed1}px, 0)`;
+            parallaxLayer2.style.transform = `translate3d(0, ${scrollY * scrollParallaxSpeed2}px, 0)`;
+        }
+
+        // Mouse parallax for dots and pointer glow (for desktop)
+        function handleMouseInteraction(e) {
+            targetX = e.clientX;
+            targetY = e.clientY;
+            
+            pointerGlow.style.opacity = '1';
+            pointerGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        }
+
+        function handleMouseLeave() {
+            pointerGlow.style.opacity = '0';
+        }
+
+        // Gyroscope parallax for dots (for mobile)
+        function handleGyroDotParallax(e) {
+            if (!e.alpha && !e.beta && !e.gamma) return; // Ignore if no data
+
+            // Device orientation values can be tricky. Calibrate these based on desired feel.
+            // Example mapping assuming portrait hold:
+            // beta: front-back tilt (-180 to 180, 0 is flat)
+            // gamma: left-right tilt (-90 to 90, 0 is flat)
+            
+            const beta = e.beta;  // Typically -180 to 180
+            const gamma = e.gamma; // Typically -90 to 90
+
+            // Normalize and scale to screen dimensions
+            // Adjust sensitivity as needed
+            const sensitivityX = 0.5; // How much gamma affects X
+            const sensitivityY = 0.5; // How much beta affects Y
+
+            // Map gamma (-90 to 90) to X position (0 to width)
+            // Center is 0, so scale from -canvas.width/2 to canvas.width/2
+            let xOffset = (gamma / 90) * (dotCanvas.width / 2) * sensitivityX;
+            // Map beta (-180 to 180, but often useful range is -90 to 90 for tilt) to Y position
+            // For a phone lying flat, 0 is flat, -90 is screen facing up, 90 is screen facing down
+            let yOffset = (beta / 90) * (dotCanvas.height / 2) * sensitivityY; // Clamp beta to -90, 90 if needed
+
+            // Apply to target coordinates relative to canvas center
+            targetX = (dotCanvas.width / 2) + xOffset;
+            targetY = (dotCanvas.height / 2) + yOffset;
+
+            // Clamp values to stay within bounds
+            targetX = Math.max(0, Math.min(dotCanvas.width, targetX));
+            targetY = Math.max(0, Math.min(dotCanvas.height, targetY));
+
+            // Update pointer glow for touch devices too
+            pointerGlow.style.opacity = '1';
+            pointerGlow.style.transform = `translate(${targetX}px, ${targetY}px)`;
+        }
+
+        const pdfLinks = {
+            1: { dakla: 'https://drive.google.com/file/d/1AgFB6iBuT9Ubprai_6uqnpzC-OMgt1au/view?usp=sharing', objective: 'https://drive.google.com/file/d/14PROipX9UGvtw5usANecZ7doCrAn2wZr/view?usp=drivesdk' },
+            2: { dakla: 'https://drive.google.com/file/d/14f3lk2MB9QKagLBABwkm8cPDrGJYeCjD/view?usp=drivesdk', objective: 'https://drive.google.com/file/d/14WXLpPOQI_gIsDnHZTxFBa6WKoTygiLw/view?usp=drivesdk' },
+            13: { dakla: 'https://drive.google.com/file/d/10EOWNsaV_J18du1vhfztceF1w7QNnVEb/view?usp=sharing', objective: 'https://drive.google.com/file/d/14NhNZfWDN_t0Qh91-kFb3aId3wsGHoI8/view?usp=drivesdk' },
+            14: { dakla: 'https://drive.google.com/file/d/1LYfPZx5y2FudhPNgWq_c05ctBvW1hdYP/view?usp=sharing', objective: 'https://drive.google.com/file/d/14RH_qDOflB0oOEX9IUmcCpa6d1W5mLvI/view?usp=drivesdk' }
+        };
+
+        function transitionContent(newHtml, callback) {
+            content.style.animation = 'none'; // Reset animation
+            content.offsetHeight; // Trigger reflow
+            content.style.animation = 'contentFadeIn 0.5s ease-out';
+            content.innerHTML = newHtml;
+            if (callback) callback();
+            content.focus();
+            // Re-apply theme classes to newly added buttons for correct styling/animations
+            document.querySelectorAll('button.liquid-glass, .btn.liquid-glass').forEach(btn => {
+                if (themeStates[currentThemeIndex] === 'normal' && btn.id !== 'themeToggle') {
                     btn.classList.add('color-changing-button');
                     let hue = Math.floor(Math.random() * 360);
                     btn.style.setProperty('--hue', hue);
@@ -675,42 +1128,21 @@
             });
         }
 
-        // Parallax effect on scroll
-        function handleParallax() {
-            const scrollY = window.pageYOffset;
-            parallaxBackground.style.transform = `translateY(${scrollY * parallaxSpeed}px)`;
-        }
-
-        const pdfLinks = {
-            1: { dakla: 'https://drive.google.com/file/d/1AgFB6iBuT9Ubprai_6uqnpzC-OMgt1au/view?usp=sharing', objective: 'https://drive.google.com/file/d/14PROipX9UGvtw5usANecZ7doCrAn2wZr/view?usp=drivesdk' },
-            2: { dakla: 'https://drive.google.com/file/d/14f3lk2MB9QKagLBABwkm8cPDrGJYeCjD/view?usp=drivesdk', objective: 'https://drive.google.com/file/d/14WXLpPOQI_gIsDnHZTxFBa6WKoTygiLw/view?usp=drivesdk' },
-            13: { dakla: 'https://drive.google.com/file/d/10EOWNsaV_J18du1vhfztceF1w7QNnVEb/view?usp=sharing', objective: 'https://drive.google.com/file/d/14NhNZfWDN_t0Qh91-kFb3aId3wsGHoI8/view?usp=drivesdk' },
-            14: { dakla: 'https://drive.google.com/file/d/1LYfPZx5y2FudhPNgWq_c05ctBvW1hdYP/view?usp=sharing', objective: 'https://drive.google.com/file/d/14RH_qDOflB0oOEX9IUmcCpa6d1W5mLvI/view?usp=drivesdk' }
-        };
-
-        function transitionContent(newHtml, callback) {
-            content.style.opacity = '0';
-            setTimeout(() => {
-                content.innerHTML = newHtml;
-                content.style.opacity = '1';
-                if (callback) callback();
-                content.focus();
-                updateTheme(true); // Re-apply theme to new elements
-            }, 300);
-        }
-
         function mainPage() {
             const html = `
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
-                    <button id="mathsBtn" aria-label="Open Maths chapters" class="liquid-glass">Maths</button>
-                    <a href="about.html" rel="noopener" class="btn liquid-glass" style="text-decoration: none; text-align: center;">About Me</a>
+                    <button id="mathsBtn" aria-label="Open Maths chapters" class="liquid-glass"><span>Maths</span></button>
+                    <a href="about.html" rel="noopener" class="btn liquid-glass" style="text-decoration: none; text-align: center;"><span>About Me</span></a>
                     <a href="${youtubeChannelLink}" target="_blank" rel="noopener" class="btn liquid-glass" id="youtubeBtn" aria-label="Open YouTube Channel">
-                        <span class="button-icon"></span> YouTube Channel
+                        <span class="button-icon"></span> <span>YouTube Channel</span>
                     </a>
                 </div>
             `;
             transitionContent(html, () => {
                 document.getElementById('mathsBtn').addEventListener('click', showChapters);
+                document.querySelectorAll('button, .btn').forEach(button => {
+                    button.addEventListener('click', createRipple);
+                });
                 document.getElementById('mathsBtn').focus();
             });
         }
@@ -719,26 +1151,30 @@
             title.textContent = 'Maths - Chapters';
             let html = '<div class="chapter-list" role="list">';
             for(let i=1; i<=14; i++) {
-                const buttonClass = (themeStates[currentThemeIndex] === 'normal') ? 'color-changing-button' : '';
+                // Determine if chapter is available
                 const isChapterAvailable = pdfLinks[i] && (pdfLinks[i].dakla || pdfLinks[i].objective);
                 const indicatorClass = isChapterAvailable ? 'available' : 'unavailable';
+                
+                // Add span around text for shadow effect
                 html += `
-                    <button class="chapter-btn liquid-glass ${buttonClass}" data-chap="${i}" role="listitem" aria-label="Open Chapter ${i}">
-                        Chapter ${i}
+                    <button class="chapter-btn liquid-glass" data-chap="${i}" role="listitem" aria-label="Open Chapter ${i}">
+                        <span>Chapter ${i}</span>
                         <span class="indicator ${indicatorClass}"></span>
                     </button>`;
             }
             html += '</div>';
-            html += '<button id="backBtn" aria-label="Back to main page" class="liquid-glass">Back</button>';
+            html += '<button id="backBtn" aria-label="Back to main page" class="liquid-glass"><span>Back</span></button>';
 
             transitionContent(html, () => {
                 document.querySelectorAll('.chapter-btn').forEach(btn => {
+                    btn.addEventListener('click', createRipple);
                     btn.addEventListener('click', () => {
                         const chap = parseInt(btn.dataset.chap);
                         if(!pdfLinks[chap]) alert('Coming soon! I will add in further updates.');
                         else showChapterOptions(chap);
                     });
                 });
+                document.getElementById('backBtn').addEventListener('click', createRipple);
                 document.getElementById('backBtn').addEventListener('click', () => { title.textContent = 'Std 10'; mainPage(); });
                 document.getElementById('backBtn').focus();
             });
@@ -748,19 +1184,21 @@
             title.textContent = `Chapter ${chapter} Options`;
             let html = `
                 <div class="option-list" role="list">
-                    <button class="option-btn liquid-glass ${themeStates[currentThemeIndex] === 'normal' ? 'color-changing-button' : ''}" data-type="dakla" role="listitem" aria-label="Open Dakla for Chapter ${chapter}">Dakla</button>
-                    <button class="option-btn liquid-glass ${themeStates[currentThemeIndex] === 'normal' ? 'color-changing-button' : ''}" data-type="objective" role="listitem" aria-label="Open Objective for Chapter ${chapter}">Objective</button>
+                    <button class="option-btn liquid-glass" data-type="dakla" role="listitem" aria-label="Open Dakla for Chapter ${chapter}"><span>Dakla</span></button>
+                    <button class="option-btn liquid-glass" data-type="objective" role="listitem" aria-label="Open Objective for Chapter ${chapter}"><span>Objective</span></button>
                 </div>
-                <button id="backBtn" aria-label="Back to chapters list" class="liquid-glass">Back</button>
+                <button id="backBtn" aria-label="Back to chapters list" class="liquid-glass"><span>Back</span></button>
             `;
             transitionContent(html, () => {
                 document.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.addEventListener('click', createRipple);
                     btn.addEventListener('click', () => {
                         const type = btn.dataset.type;
                         if (pdfLinks[chapter] && pdfLinks[chapter][type]) openPDFInNewTab(pdfLinks[chapter][type]);
                         else alert('Coming soon! I will add in further updates.');
                     });
                 });
+                document.getElementById('backBtn').addEventListener('click', createRipple);
                 document.getElementById('backBtn').addEventListener('click', showChapters);
                 document.getElementById('backBtn').focus();
             });
@@ -771,26 +1209,87 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.body.classList.add('dark-mode');
-            applyBackground('dark');
-            document.body.style.color = '#f0f0f0';
+            // Initial theme setup (start in dark mode)
+            currentThemeIndex = 0; // Ensure it starts at dark
+            applyBackground(themeStates[currentThemeIndex]);
             mainPage();
-            themeToggle.textContent = themeLabels[themeStates[currentThemeIndex]];
+            themeToggle.addEventListener('click', createRipple);
             
-            // Add scroll listener for parallax effect
-            window.addEventListener('scroll', handleParallax);
-            // Initial call to set correct parallax position
-            handleParallax();
+            window.addEventListener('scroll', handleScrollParallax);
+            handleScrollParallax(); // Initial call for correct parallax on load
+
+            // Canvas initialisation
+            dotCanvas.width = window.innerWidth;
+            dotCanvas.height = window.innerHeight;
+            initDots();
+            animateDots();
+
+            particleCanvas.width = window.innerWidth;
+            particleCanvas.height = window.innerHeight;
+            initParticles();
+            animateParticles();
+
+            // Mouse/Gyroscope handling
+            if (isMobile) {
+                // Request permission for device orientation on iOS 13+
+                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    themeToggle.addEventListener('click', function requestMotionPermission() {
+                        DeviceOrientationEvent.requestPermission()
+                            .then(permissionState => {
+                                if (permissionState === 'granted') {
+                                    deviceOrientationGranted = true;
+                                    window.addEventListener('deviceorientation', handleGyroDotParallax);
+                                    console.log('Gyroscope permission granted.');
+                                } else {
+                                    deviceOrientationGranted = false;
+                                    console.warn('Gyroscope permission denied.');
+                                    // Fallback to mouse behavior or just static pointer glow
+                                    pointerGlow.style.opacity = '0';
+                                }
+                            })
+                            .catch(console.error);
+                        // This listener is removed after first click to prevent re-prompting
+                        themeToggle.removeEventListener('click', requestMotionPermission); 
+                    }, { once: true }); // Only run once
+                } else {
+                    // For Android and older iOS where permission is not required
+                    window.addEventListener('deviceorientation', handleGyroDotParallax);
+                    console.log('DeviceOrientation event listener added (no explicit permission needed).');
+                }
+                // For mobile, pointer glow fades out after a short period of no movement
+                let pointerGlowTimeout;
+                window.addEventListener('deviceorientation', () => {
+                    clearTimeout(pointerGlowTimeout);
+                    pointerGlow.style.opacity = '1';
+                    pointerGlowTimeout = setTimeout(() => {
+                        pointerGlow.style.opacity = '0';
+                    }, 2000); // Fade out after 2 seconds of no movement
+                });
+            } else {
+                // Desktop: mouse movement
+                document.addEventListener('mousemove', handleMouseInteraction);
+                document.addEventListener('mouseleave', handleMouseLeave);
+                console.log('Mousemove event listener added for dot parallax and pointer glow.');
+            }
+
+            window.addEventListener('resize', () => {
+                dotCanvas.width = window.innerWidth;
+                dotCanvas.height = window.innerHeight;
+                initDots(); // Re-initialize dots to fit new dimensions and quantity
+
+                particleCanvas.width = window.innerWidth;
+                particleCanvas.height = window.innerHeight;
+                initParticles(); // Re-initialize particles
+
+                handleScrollParallax(); // Re-adjust static parallax on resize
+            });
         });
 
         themeToggle.addEventListener('click', () => {
             const oldTheme = themeStates[currentThemeIndex];
             currentThemeIndex = (currentThemeIndex + 1) % themeStates.length;
             const newTheme = themeStates[currentThemeIndex];
-            document.body.classList.remove('normal-mode', 'light-mode', 'dark-mode');
-            document.body.classList.add(`${newTheme}-mode`);
-            animateBackgroundSlide(oldTheme, newTheme);
-            updateTheme(true); // Call updateTheme with initialLoad=true after animation for final state
+            animateBackgroundSlide(oldTheme, newTheme); // Pass old and new theme for transition logic
         });
     </script>
 </body>
