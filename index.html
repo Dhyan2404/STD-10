@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Std 10 - Liquid UI Extreme v2</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=wrap" rel="stylesheet">
     <style>
         /* --- Base Styles & Reset --- */
         :root {
@@ -29,8 +29,9 @@
         html, body {
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            flex-direction: column; /* Stack children vertically */
+            align-items: center; /* Center children horizontally */
+            justify-content: center; /* Center children vertically */
             padding: 1rem;
             position: relative;
             font-family: 'Segoe UI', sans-serif;
@@ -90,28 +91,6 @@
             opacity: 0; /* Starts off for dark mode */
         }
 
-        #gradient-blob {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(
-                circle at var(--blob-x, 50%) var(--blob-y, 50%),
-                rgba(255, 0, 127, 0.3) 0%, /* Pink */
-                rgba(0, 255, 255, 0.3) 30%, /* Cyan */
-                rgba(127, 0, 255, 0.3) 60%, /* Purple */
-                transparent 100%
-            );
-            filter: blur(100px); /* Creates a soft, glowing blob */
-            opacity: 0.4;
-            animation: blobShift 20s ease-in-out infinite alternate;
-            z-index: -6;
-            mix-blend-mode: screen; /* For cool light effects */
-            transition: opacity 0.7s ease, background 0.7s ease;
-            will-change: filter, opacity, background;
-        }
-
         #particle-canvas {
             z-index: -5;
             opacity: 0.8;
@@ -160,6 +139,8 @@
         /* --- Theme Specific Body Classes --- */
         body.light-mode #main-background { background: linear-gradient(135deg, #e0f2f7, #f0faff); }
         body.dark-mode #main-background { background: linear-gradient(135deg, #0a0a0a, #1e1e1e); }
+        body.normal-mode #main-background { background: none; } /* Corrected for normal mode */
+        
         body.normal-mode #animated-background { opacity: 0.8; }
         body.light-mode #animated-background, body.dark-mode #animated-background { opacity: 0; }
         body.light-mode { color: #333; }
@@ -183,37 +164,6 @@
         body.normal-mode #particle-canvas { opacity: 0.9; }
         body.light-mode #particle-canvas { opacity: 0.6; }
         body.dark-mode #particle-canvas { opacity: 0.8; }
-
-        /* Gradient Blob per theme */
-        body.normal-mode #gradient-blob {
-            opacity: 0.6;
-            background: radial-gradient(
-                circle at var(--blob-x, 50%) var(--blob-y, 50%),
-                rgba(255, 0, 127, 0.4) 0%, /* Pink */
-                rgba(0, 255, 255, 0.4) 30%, /* Cyan */
-                rgba(127, 0, 255, 0.4) 60%, /* Purple */
-                transparent 100%
-            );
-        }
-        body.light-mode #gradient-blob {
-            opacity: 0.3;
-            background: radial-gradient(
-                circle at var(--blob-x, 50%) var(--blob-y, 50%),
-                rgba(0, 150, 255, 0.2) 0%, /* Light blue */
-                rgba(255, 200, 0, 0.2) 50%, /* Yellow */
-                transparent 100%
-            );
-        }
-        body.dark-mode #gradient-blob {
-            opacity: 0.4;
-            background: radial-gradient(
-                circle at var(--blob-x, 50%) var(--blob-y, 50%),
-                rgba(255, 165, 0, 0.3) 0%, /* Orange */
-                rgba(150, 0, 255, 0.3) 50%, /* Dark Purple */
-                transparent 100%
-            );
-        }
-
 
         /* Vignette effect per theme */
         body.normal-mode #vignette-overlay { box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.7), inset 0 0 150px rgba(0, 0, 0, 0.5); }
@@ -243,13 +193,6 @@
             0% { transform: translateY(0px) rotate(0.5deg); }
             50% { transform: translateY(-5px) rotate(-0.5deg); }
             100% { transform: translateY(0px) rotate(0.5deg); }
-        }
-        @keyframes blobShift {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(5%, -10%); }
-            50% { transform: translate(-10%, 15%); }
-            75% { transform: translate(15%, -5%); }
-            100% { transform: translate(0, 0); }
         }
 
 
@@ -300,32 +243,6 @@
             75% { transform: translate(5%, 5%) rotate(2deg); opacity: 0.9; }
         }
 
-        /* --- Button Color Changing Logic --- */
-        .color-changing-button {
-            background: linear-gradient(
-                135deg,
-                hsl(var(--hue, 0), 70%, 60%),
-                hsl(calc(var(--hue, 0) + 60), 70%, 60%),
-                hsl(calc(var(--hue, 0) + 120), 70%, 60%),
-                hsl(calc(var(--hue, 0) + 180), 70%, 60%),
-                hsl(calc(var(--hue, 0) + 240), 70%, 60%),
-                hsl(calc(var(--hue, 0) + 300), 70%, 60%)
-            );
-            background-size: 200% 200%;
-            animation: hueRotateButton 10s linear infinite, moveButtonGradient 10s linear infinite;
-            color: white !important;
-            transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        @keyframes hueRotateButton {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
-        }
-        @keyframes moveButtonGradient {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
-        }
-
         /* --- UI Element Styling --- */
         .title-container {
             display: inline-block;
@@ -361,8 +278,9 @@
             text-align: center;
             min-height: 360px;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            flex-direction: column; /* Stack children vertically */
+            justify-content: center; /* Center children vertically */
+            align-items: center; /* Center children horizontally */
             opacity: 1;
             will-change: opacity, transform;
             color: inherit;
@@ -432,9 +350,6 @@
         body.dark-mode .ripple {
             background-color: var(--ripple-color-dark); /* Dark ripple */
         }
-        body.normal-mode .ripple {
-            background-color: hsl(var(--button-hue-at-click, 0), 90%, 80%, 0.7); /* Hue-aware ripple */
-        }
 
         @keyframes ripple {
             to {
@@ -490,47 +405,15 @@
         body.dark-mode #backBtn { color: #f0f0f0; }
 
         .theme-toggle {
-            position: fixed;
-            top: 16px;
-            right: 16px;
-            z-index: 999;
+            /* No longer fixed position */
+            margin-top: 1.5rem; /* Space from the content above it */
+            z-index: 101; /* Still above content */
             padding: 0.7rem 1.2rem;
             font-weight: 600;
             cursor: pointer;
             color: inherit;
             box-shadow: none;
         }
-
-        /* --- CommonNinja Comment Section Styling (Example for integration) --- */
-        /*
-        .commonninja_component {
-            margin-top: 1rem;
-            margin-bottom: 2rem;
-            padding: 1rem;
-            border-radius: 18px;
-            transition: background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                                color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            max-width: 700px;
-            width: 100%;
-            z-index: 100;
-        }
-
-        body.normal-mode .commonninja_component {
-            background: rgba(255, 255, 255, 0.15);
-            color: #333;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        body.light-mode .commonninja_component {
-            background: rgba(255, 255, 255, 0.4);
-            color: #1a2935;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-        }
-        body.dark-mode .commonninja_component {
-            background: rgba(30, 30, 30, 0.4);
-            color: #f0f0f0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        */
 
         /* --- Hover/Focus Effects for Buttons --- */
         button:hover, .btn:hover,
@@ -555,17 +438,6 @@
             box-shadow:
                 0 0 0 4px rgba(255, 0, 127, 0.7),
                 0 0 15px 5px rgba(0, 255, 255, 0.5);
-        }
-        body.normal-mode .color-changing-button:hover {
-            box-shadow:
-                0 12px 24px rgba(0, 0, 0, 0.3),
-                0 0 60px hsl(var(--hue, 0), 100%, 70%, 0.6),
-                0 0 100px hsl(calc(var(--hue, 0) + 90), 100%, 60%, 0.4);
-        }
-        body.normal-mode .color-changing-button:focus {
-            box-shadow:
-                0 0 0 4px hsl(var(--hue, 0), 100%, 70%, 0.7),
-                0 0 15px 5px hsl(calc(var(--hue, 0) + 90), 100%, 60%, 0.5);
         }
 
         /* --- Light Mode Overrides --- */
@@ -618,27 +490,97 @@
                 0 0 15px 5px rgba(255, 165, 0, 0.5);
         }
 
+        /* --- Center Message Styling --- */
+        #center-message {
+            padding: 2rem;
+            max-width: 500px;
+            margin-bottom: 2rem; /* Adjusted margin to push buttons down */
+            text-align: center;
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 1.1em;
+            opacity: 0.95;
+            transform: translateY(0); /* Ensure no initial transform interference */
+            transition: all 0.5s ease-out; /* Smooth transitions for appearance */
+        }
+
+        #center-message h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8em;
+            margin-bottom: 0.8em;
+            font-weight: 700;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            color: inherit;
+        }
+
+        #center-message p {
+            margin-bottom: 0.5em;
+            color: inherit;
+        }
+
+        /* Adjustments for different themes (optional, but good for consistency) */
+        body.light-mode #center-message {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            color: #1a2935;
+        }
+
+        body.dark-mode #center-message {
+            background: rgba(30, 30, 30, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            color: #f0f0f0;
+        }
+
+        body.normal-mode #center-message {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            color: inherit; /* Uses main body color */
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             h1, .title-container { font-size: 2.2rem; margin-bottom: 1.5rem; }
             .chapter-btn, .option-btn { flex: 1 0 45%; padding: 0.8rem 0; font-size: 1rem; }
             #content { padding: 1.5rem; min-height: auto; }
             button, .btn { min-width: 120px; font-size: 1rem; padding: 0.8rem 1.5rem; }
-            .commonninja_component { padding: 0.8rem; }
             .chapter-list, .option-list { gap: 1rem; }
             .chapter-btn .indicator { width: 10px; height: 10px; top: 6px; right: 6px; }
             #vignette-overlay { box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.8), inset 0 0 100px rgba(0, 0, 0, 0.6); }
             #pointer-glow { width: 100px; height: 100px; filter: blur(30px); }
+
+            #center-message {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            #center-message h2 {
+                font-size: 1.5em;
+            }
+            #center-message p {
+                font-size: 0.95em;
+            }
         }
         @media (max-width: 480px) {
             h1, .title-container { font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 1rem; }
             .chapter-btn, .option-btn { flex: 1 0 90%; padding: 0.7rem 0; font-size: 0.95rem; }
             button, .btn { min-width: 100px; font-size: 0.9rem; padding: 0.7rem 1rem; }
-            .commonninja_component { padding: 0.6rem; }
             .chapter-list, .option-list { gap: 0.8rem; }
             .theme-toggle { padding: 0.6rem 1rem; font-size: 0.9rem; }
             #vignette-overlay { box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8), inset 0 0 80px rgba(0, 0, 0, 0.6); }
             #pointer-glow { width: 80px; height: 80px; filter: blur(25px); }
+
+            #center-message {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            #center-message h2 {
+                font-size: 1.2em;
+            }
+            #center-message p {
+                font-size: 0.9em;
+            }
         }
     </style>
 </head>
@@ -646,7 +588,6 @@
     <div id="main-background" class="background-layer"></div>
     <div id="parallax-layer-1" class="background-layer"></div>
     <div id="parallax-layer-2" class="background-layer"></div>
-    <div id="gradient-blob" class="background-layer"></div>
     <canvas id="particle-canvas" class="background-layer"></canvas>
     <canvas id="dot-canvas" class="background-layer"></canvas>
     <div id="animated-background" class="background-layer"></div>
@@ -654,11 +595,17 @@
     <div id="vignette-overlay"></div>
     <div id="pointer-glow"></div>
 
-    <button class="theme-toggle liquid-glass" id="themeToggle"></button>
-
     <div class="title-container liquid-glass" id="title">Std 10</div>
         
-    <div id="content" class="liquid-glass" role="main" tabindex="-1"></div>
+    <div id="content" class="liquid-glass" role="main" tabindex="-1">
+        <div id="center-message" class="liquid-glass">
+            <h2>Welcome to Liquid UI Extreme!</h2>
+            <p>Explore the interactive background and dynamic themes.</p>
+            <p>Move your mouse (or tilt your device) to see the effects!</p>
+      
+        </div>
+        <button class="theme-toggle liquid-glass" id="themeToggle"></button>
+    </div>
     
     <script>
         const content = document.getElementById('content');
@@ -674,7 +621,6 @@
         const animatedBackground = document.getElementById('animated-background');
         const backgroundOverlay = document.getElementById('background-overlay');
         const vignetteOverlay = document.getElementById('vignette-overlay');
-        const gradientBlob = document.getElementById('gradient-blob');
         const pointerGlow = document.getElementById('pointer-glow');
 
         // Optional Audio Elements
@@ -711,7 +657,7 @@
         let mouseY = window.innerHeight / 2;
         let targetX = mouseX;
         let targetY = mouseY;
-        let currentHue = 0; // For Normal mode button hue
+        let deviceOrientationGranted = false; // Flag for gyroscope permission
 
         // Particle animation settings
         const numParticles = 100;
@@ -720,7 +666,6 @@
         let particles = [];
 
         const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-        let deviceOrientationGranted = false;
         
         // Ripple effect handler
         function createRipple(event) {
@@ -733,13 +678,6 @@
             circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
             circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
             circle.classList.add('ripple');
-
-            // Set ripple color dynamically for normal mode
-            if (document.body.classList.contains('normal-mode')) {
-                // Get the current hue of the button
-                const computedHue = parseFloat(getComputedStyle(button).getPropertyValue('--hue').trim()) || 0;
-                button.style.setProperty('--button-hue-at-click', computedHue);
-            }
 
             const ripple = button.getElementsByClassName('ripple')[0];
 
@@ -800,13 +738,8 @@
                 const dynamicRadius = this.radius + speedMagnitude * 50;
                 
                 let dotColor = dotColorBase;
-                if (document.body.classList.contains('normal-mode')) {
-                    const hueOffset = speedMagnitude * 7000;
-                    dotColor = `hsla(${(hueOffset % 360)}, 100%, 70%, ${this.opacity})`;
-                } else {
-                    dotColor = dotColorBase.replace(')', `, ${this.opacity})`);
-                }
-
+                dotColor = dotColorBase.replace(')', `, ${this.opacity})`);
+                
                 dotCtx.arc(this.x, this.y, dynamicRadius, 0, Math.PI * 2);
                 dotCtx.fillStyle = dotColor;
                 dotCtx.fill();
@@ -885,9 +818,9 @@
                 dotColorBase = 'rgba(255, 255, 255, 0.3)';
                 lineColor = 'rgba(255, 255, 255, 0.05)';
             } else if (currentTheme === 'normal') {
-                // Hue-based colors for normal mode dots
-                dotColorBase = `hsla(${currentHue}, 100%, 70%, 0.6)`;
-                lineColor = `hsla(${currentHue + 180}, 80%, 50%, 0.2)`;
+                // Fixed colors for normal mode dots
+                dotColorBase = `rgba(0, 200, 255, 0.6)`; // Cyan-ish
+                lineColor = `rgba(255, 0, 200, 0.2)`; // Magenta-ish
             }
 
             for (let i = 0; i < dots.length; i++) {
@@ -947,7 +880,6 @@
                 parallaxLayer2.style.filter = 'hue-rotate(180deg) saturate(80%) brightness(150%)';
                 dotCanvas.style.opacity = '0.7';
                 particleCanvas.style.opacity = '0.6';
-                gradientBlob.style.opacity = '0.3';
                 vignetteOverlay.style.boxShadow = 'inset 0 0 80px rgba(0, 0, 0, 0.1), inset 0 0 120px rgba(0, 0, 0, 0.05)';
                 animatedBackground.style.opacity = '0';
             } else if (theme === 'dark') {
@@ -958,51 +890,27 @@
                 parallaxLayer2.style.filter = 'hue-rotate(270deg) saturate(120%) brightness(80%)';
                 dotCanvas.style.opacity = '0.5';
                 particleCanvas.style.opacity = '0.8';
-                gradientBlob.style.opacity = '0.4';
                 vignetteOverlay.style.boxShadow = 'inset 0 0 100px rgba(0, 0, 0, 0.9), inset 0 0 150px rgba(0, 0, 0, 0.7)';
                 animatedBackground.style.opacity = '0';
             } else { // Normal mode
-                mainBackground.style.background = 'transparent';
+                mainBackground.style.background = 'none'; // Corrected
                 parallaxLayer1.style.opacity = '0.7';
                 parallaxLayer1.style.filter = 'grayscale(0%) brightness(100%)';
                 parallaxLayer2.style.opacity = '0.8';
                 parallaxLayer2.style.filter = 'hue-rotate(0deg) saturate(100%) brightness(100%)';
                 dotCanvas.style.opacity = '1';
                 particleCanvas.style.opacity = '0.9';
-                gradientBlob.style.opacity = '0.6';
                 vignetteOverlay.style.boxShadow = 'inset 0 0 100px rgba(0, 0, 0, 0.7), inset 0 0 150px rgba(0, 0, 0, 0.5)';
                 animatedBackground.style.opacity = '0.8';
             }
 
-            // Update button styles after class is applied
+            // Update button styles after class is applied (NO color changing for buttons)
             document.querySelectorAll('button.liquid-glass, .btn.liquid-glass').forEach(btn => {
-                if (btn.id === 'themeToggle') {
-                    btn.classList.remove('color-changing-button');
-                    btn.style.removeProperty('--hue');
-                    if (btn.hueInterval) {
-                        clearInterval(btn.hueInterval);
-                        btn.hueInterval = null;
-                    }
-                    return;
-                }
-
-                if (theme === 'normal') {
-                    btn.classList.add('color-changing-button');
-                    let hue = Math.floor(Math.random() * 360);
-                    btn.style.setProperty('--hue', hue);
-                    if (!btn.hueInterval) {
-                        btn.hueInterval = setInterval(() => {
-                            hue = (hue + 1) % 360;
-                            btn.style.setProperty('--hue', hue);
-                        }, 50);
-                    }
-                } else {
-                    btn.classList.remove('color-changing-button');
-                    btn.style.removeProperty('--hue');
-                    if (btn.hueInterval) {
-                        clearInterval(btn.hueInterval);
-                        btn.hueInterval = null;
-                    }
+                btn.classList.remove('color-changing-button'); // Ensure it's always removed
+                btn.style.removeProperty('--hue');
+                if (btn.hueInterval) { // Clear any existing intervals
+                    clearInterval(btn.hueInterval);
+                    btn.hueInterval = null;
                 }
             });
             // if (themeChangeSound) themeChangeSound.play().catch(e => console.log("Theme change sound play failed:", e));
@@ -1012,7 +920,7 @@
             let overlayBackground = '';
             if (oldTheme === 'light') overlayBackground = 'linear-gradient(135deg, #e0f2f7, #f0faff)';
             else if (oldTheme === 'dark') overlayBackground = 'linear-gradient(135deg, #0a0a0a, #1e1e1e)';
-            else overlayBackground = 'linear-gradient(45deg, #ff007f, #00ffff, #ffea00, #7f00ff)'; // If coming FROM normal mode
+            else overlayBackground = 'linear-gradient(45deg, #ff007f, #00ffff, #ffea00, #7f00ff)'; // If coming FROM normal mode animated background
 
             backgroundOverlay.style.background = overlayBackground;
             backgroundOverlay.style.transform = 'translateX(0)';
@@ -1056,7 +964,7 @@
 
         // Gyroscope parallax for dots (for mobile)
         function handleGyroDotParallax(e) {
-            if (!e.alpha && !e.beta && !e.gamma) return; // Ignore if no data
+            if (!e.alpha && !e.beta && !e.gamma) return; // Ignore if no data or invalid data
 
             // Device orientation values can be tricky. Calibrate these based on desired feel.
             // Example mapping assuming portrait hold:
@@ -1086,7 +994,7 @@
             targetX = Math.max(0, Math.min(dotCanvas.width, targetX));
             targetY = Math.max(0, Math.min(dotCanvas.height, targetY));
 
-            // Update pointer glow for touch devices too
+            // Update pointer glow for mobile too
             pointerGlow.style.opacity = '1';
             pointerGlow.style.transform = `translate(${targetX}px, ${targetY}px)`;
         }
@@ -1094,7 +1002,7 @@
         const pdfLinks = {
             1: { dakla: 'https://drive.google.com/file/d/1AgFB6iBuT9Ubprai_6uqnpzC-OMgt1au/view?usp=sharing', objective: 'https://drive.google.com/file/d/14PROipX9UGvtw5usANecZ7doCrAn2wZr/view?usp=drivesdk' },
             2: { dakla: 'https://drive.google.com/file/d/14f3lk2MB9QKagLBABwkm8cPDrGJYeCjD/view?usp=drivesdk', objective: 'https://drive.google.com/file/d/14WXLpPOQI_gIsDnHZTxFBa6WKoTygiLw/view?usp=drivesdk' },
-            13: { dakla: 'https://drive.google.com/file/d/10EOWNsaV_J18du1vhfztceF1w7QNnVEb/view?usp=sharing', objective: 'https://drive.google.com/file/d/14NhNZfWDN_t0Qh91-kFb3aId3wsGHoI8/view?usp=drivesdk' },
+            13: { dakla: 'https://drive.google.com/file/d/10EOWNsaV_J18du1vhfztceF1w7QNnVEb/view?usp=drivesdk', objective: 'https://drive.google.com/file/d/14NhNZfWDN_t0Qh91-kFb3aId3wsGHoI8/view?usp=drivesdk' },
             14: { dakla: 'https://drive.google.com/file/d/1LYfPZx5y2FudhPNgWq_c05ctBvW1hdYP/view?usp=sharing', objective: 'https://drive.google.com/file/d/14RH_qDOflB0oOEX9IUmcCpa6d1W5mLvI/view?usp=drivesdk' }
         };
 
@@ -1107,29 +1015,24 @@
             content.focus();
             // Re-apply theme classes to newly added buttons for correct styling/animations
             document.querySelectorAll('button.liquid-glass, .btn.liquid-glass').forEach(btn => {
-                if (themeStates[currentThemeIndex] === 'normal' && btn.id !== 'themeToggle') {
-                    btn.classList.add('color-changing-button');
-                    let hue = Math.floor(Math.random() * 360);
-                    btn.style.setProperty('--hue', hue);
-                    if (!btn.hueInterval) {
-                        btn.hueInterval = setInterval(() => {
-                            hue = (hue + 1) % 360;
-                            btn.style.setProperty('--hue', hue);
-                        }, 50);
-                    }
-                } else {
-                    btn.classList.remove('color-changing-button');
-                    btn.style.removeProperty('--hue');
-                    if (btn.hueInterval) {
-                        clearInterval(btn.hueInterval);
-                        btn.hueInterval = null;
-                    }
+                btn.classList.remove('color-changing-button'); // Ensure it's always removed
+                btn.style.removeProperty('--hue');
+                if (btn.hueInterval) {
+                    clearInterval(btn.hueInterval);
+                    btn.hueInterval = null;
                 }
             });
         }
 
         function mainPage() {
             const html = `
+                <div id="center-message" class="liquid-glass">
+                    <h2>Welcome to Liquid UI Extreme!</h2>
+                    <p>Explore the interactive background and dynamic themes.</p>
+                    <p>Move your mouse (or tilt your device) to see the effects!</p>
+                    <p>Click the buttons below to navigate.</p>
+                </div>
+
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
                     <button id="mathsBtn" aria-label="Open Maths chapters" class="liquid-glass"><span>Maths</span></button>
                     <a href="about.html" rel="noopener" class="btn liquid-glass" style="text-decoration: none; text-align: center;"><span>About Me</span></a>
@@ -1137,6 +1040,9 @@
                         <span class="button-icon"></span> <span>YouTube Channel</span>
                     </a>
                 </div>
+                <button class="theme-toggle liquid-glass" id="themeToggle">
+                    ${themeLabels[themeStates[currentThemeIndex]]}
+                </button>
             `;
             transitionContent(html, () => {
                 document.getElementById('mathsBtn').addEventListener('click', showChapters);
@@ -1144,6 +1050,15 @@
                     button.addEventListener('click', createRipple);
                 });
                 document.getElementById('mathsBtn').focus();
+                // Re-attach listener for theme toggle as it's re-rendered
+                const reRenderedThemeToggle = document.getElementById('themeToggle');
+                reRenderedThemeToggle.addEventListener('click', createRipple);
+                reRenderedThemeToggle.addEventListener('click', () => {
+                    const oldTheme = themeStates[currentThemeIndex];
+                    currentThemeIndex = (currentThemeIndex + 1) % themeStates.length;
+                    const newTheme = themeStates[currentThemeIndex];
+                    animateBackgroundSlide(oldTheme, newTheme);
+                });
             });
         }
 
@@ -1212,8 +1127,7 @@
             // Initial theme setup (start in dark mode)
             currentThemeIndex = 0; // Ensure it starts at dark
             applyBackground(themeStates[currentThemeIndex]);
-            mainPage();
-            themeToggle.addEventListener('click', createRipple);
+            mainPage(); // This will now render the initial page with the theme toggle
             
             window.addEventListener('scroll', handleScrollParallax);
             handleScrollParallax(); // Initial call for correct parallax on load
@@ -1231,40 +1145,87 @@
 
             // Mouse/Gyroscope handling
             if (isMobile) {
-                // Request permission for device orientation on iOS 13+
+                // Check if DeviceOrientationEvent.requestPermission is available (iOS 13+)
                 if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                    themeToggle.addEventListener('click', function requestMotionPermission() {
+                    const requestPermissionAndEnableGyro = () => {
                         DeviceOrientationEvent.requestPermission()
                             .then(permissionState => {
                                 if (permissionState === 'granted') {
                                     deviceOrientationGranted = true;
                                     window.addEventListener('deviceorientation', handleGyroDotParallax);
-                                    console.log('Gyroscope permission granted.');
+                                    console.log('Gyroscope permission granted and listener added.');
                                 } else {
                                     deviceOrientationGranted = false;
-                                    console.warn('Gyroscope permission denied.');
-                                    // Fallback to mouse behavior or just static pointer glow
+                                    console.warn('Gyroscope permission denied. Pointer glow will be static or follow touch.');
+                                    // Hide pointer glow if gyroscope is crucial for its dynamic behavior
                                     pointerGlow.style.opacity = '0';
                                 }
                             })
-                            .catch(console.error);
-                        // This listener is removed after first click to prevent re-prompting
-                        themeToggle.removeEventListener('click', requestMotionPermission); 
-                    }, { once: true }); // Only run once
+                            .catch(error => {
+                                console.error('Error requesting gyroscope permission:', error);
+                                pointerGlow.style.opacity = '0';
+                            });
+                        // Remove this listener so it doesn't try to re-request on subsequent clicks
+                        document.body.removeEventListener('click', requestPermissionAndEnableGyro); 
+                    };
+
+                    // Attach the permission request to the first user interaction with the body
+                    document.body.addEventListener('click', requestPermissionAndEnableGyro, { once: true });
+                    console.log('Permission request listener added for iOS 13+ device orientation.');
+
                 } else {
-                    // For Android and older iOS where permission is not required
+                    // For Android and older iOS where explicit permission is not required
                     window.addEventListener('deviceorientation', handleGyroDotParallax);
+                    deviceOrientationGranted = true; // Assume granted if no prompt is needed
                     console.log('DeviceOrientation event listener added (no explicit permission needed).');
                 }
+
                 // For mobile, pointer glow fades out after a short period of no movement
                 let pointerGlowTimeout;
                 window.addEventListener('deviceorientation', () => {
-                    clearTimeout(pointerGlowTimeout);
-                    pointerGlow.style.opacity = '1';
-                    pointerGlowTimeout = setTimeout(() => {
-                        pointerGlow.style.opacity = '0';
-                    }, 2000); // Fade out after 2 seconds of no movement
+                    if (deviceOrientationGranted) { // Only clear timeout if gyroscope is actually active
+                        clearTimeout(pointerGlowTimeout);
+                        pointerGlow.style.opacity = '1';
+                        pointerGlowTimeout = setTimeout(() => {
+                            pointerGlow.style.opacity = '0';
+                        }, 2000); // Fade out after 2 seconds of no movement
+                    }
                 });
+
+                 // Also add touch event listeners for targetX/Y for direct touch interaction
+                document.addEventListener('touchstart', (e) => {
+                    if (!deviceOrientationGranted && e.touches.length > 0) { // Only use touch if gyro is not granted
+                        targetX = e.touches[0].clientX;
+                        targetY = e.touches[0].clientY;
+                        pointerGlow.style.opacity = '1';
+                        pointerGlow.style.transform = `translate(${targetX}px, ${targetY}px)`;
+                        clearTimeout(pointerGlowTimeout);
+                        pointerGlowTimeout = setTimeout(() => {
+                            pointerGlow.style.opacity = '0';
+                        }, 2000);
+                    }
+                }, { passive: true });
+
+                document.addEventListener('touchmove', (e) => {
+                    if (!deviceOrientationGranted && e.touches.length > 0) { // Only use touch if gyro is not granted
+                        targetX = e.touches[0].clientX;
+                        targetY = e.touches[0].clientY;
+                        pointerGlow.style.transform = `translate(${targetX}px, ${targetY}px)`;
+                        clearTimeout(pointerGlowTimeout);
+                        pointerGlowTimeout = setTimeout(() => {
+                            pointerGlow.style.opacity = '0';
+                        }, 2000);
+                    }
+                }, { passive: true });
+
+                document.addEventListener('touchend', () => {
+                    if (!deviceOrientationGranted) { // Only manage touch fade out if gyro is not granted
+                        pointerGlowTimeout = setTimeout(() => {
+                            pointerGlow.style.opacity = '0';
+                        }, 100); // Fade out quickly after touch ends
+                    }
+                });
+
             } else {
                 // Desktop: mouse movement
                 document.addEventListener('mousemove', handleMouseInteraction);
@@ -1284,13 +1245,15 @@
                 handleScrollParallax(); // Re-adjust static parallax on resize
             });
         });
-
-        themeToggle.addEventListener('click', () => {
-            const oldTheme = themeStates[currentThemeIndex];
-            currentThemeIndex = (currentThemeIndex + 1) % themeStates.length;
-            const newTheme = themeStates[currentThemeIndex];
-            animateBackgroundSlide(oldTheme, newTheme); // Pass old and new theme for transition logic
-        });
+        
+        // This listener needs to be outside DOMContentLoaded if the button is dynamically added
+        // It's re-attached in mainPage() function now.
+        // themeToggle.addEventListener('click', () => {
+        //     const oldTheme = themeStates[currentThemeIndex];
+        //     currentThemeIndex = (currentThemeIndex + 1) % themeStates.length;
+        //     const newTheme = themeStates[currentThemeIndex];
+        //     animateBackgroundSlide(oldTheme, newTheme); // Pass old and new theme for transition logic
+        // });
     </script>
 </body>
 </html>
